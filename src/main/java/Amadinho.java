@@ -2,45 +2,32 @@ import java.util.Scanner;
 
 public class Amadinho {
 
-    public static void intro() {
-        System.out.println("____________________________________________________________");
-        System.out.println("Hello! I'm Amadinho!");
-        System.out.println("What can I do for you?");
-        System.out.println("____________________________________________________________");
-    }
-
-    public static void exit() {
-        System.out.println("____________________________________________________________");
-        System.out.println("Bye. Hope to see you again soon!");
-        System.out.println("____________________________________________________________");
-    }
-
-    public static void readInput(Scanner in, boolean quit, Task[] toDo) {
-        while (!quit) {
+    public static void readInput(Scanner in, boolean isFinished, Task[] toDoList) {
+        while (!isFinished) {
             String command = in.nextLine();
 
             // trigger for mark / unmark
-            if(command.startsWith("mark")) {
-                mark(toDo, command);
+            if (command.startsWith("mark")) {
+                mark(toDoList, command);
             } else if (command.startsWith("unmark")) {
-                unmark(toDo, command);
+                unmark(toDoList, command);
             } else {
                 // trigger for other commands (add / list / bye)
                 switch (command) {
                 case "bye":
-                    quit = true;
+                    isFinished = true;
                     break;
                 case "list":
-                    list(toDo);
+                    list(toDoList);
                     break;
                 default:
-                    add(toDo, command);
+                    add(toDoList, command);
                 }
             }
         }
     }
 
-    public static void mark(Task[] toDo, String command) {
+    public static void mark(Task[] toDoList, String command) {
         int numberPosition = command.indexOf(" ");
         int number = Integer.parseInt(command.substring(numberPosition + 1)) - 1;
 
@@ -49,12 +36,12 @@ public class Amadinho {
 
         do {
             // exception for out of bounds
-            if (toDo[i] == null) {
+            if (toDoList[i] == null) {
                 throw new IndexOutOfBoundsException("Index out of bounds");
             }
 
             if (i == number) {
-                toDo[i].markAsDone();
+                toDoList[i].markAsDone();
                 break;
             }
 
@@ -63,11 +50,12 @@ public class Amadinho {
 
         System.out.println("____________________________________________________________");
         System.out.println("Nice! I've marked this task as done:");
-        System.out.println("   [" + toDo[i].getStatusIcon() + "] " + toDo[i].getDescription());
+        System.out.println("   [" + toDoList[i].getStatusIcon() + "] " +
+                toDoList[i].getDescription());
         System.out.println("____________________________________________________________");
     }
 
-    public static void unmark(Task[] toDo, String command) {
+    public static void unmark(Task[] toDoList, String command) {
         int numberPosition = command.indexOf(" ");
         int number = Integer.parseInt(command.substring(numberPosition + 1)) - 1;
 
@@ -76,12 +64,12 @@ public class Amadinho {
 
         do {
             // exception for out of bounds
-            if (toDo[i] == null) {
+            if (toDoList[i] == null) {
                 throw new IndexOutOfBoundsException("Index out of bounds");
             }
 
             if (i == number) {
-                toDo[i].markAsUndone();
+                toDoList[i].markAsUndone();
                 break;
             }
 
@@ -90,15 +78,16 @@ public class Amadinho {
 
         System.out.println("____________________________________________________________");
         System.out.println("OK, I've marked this task as not done yet:");
-        System.out.println("   [" + toDo[i].getStatusIcon() + "] " + toDo[i].getDescription());
+        System.out.println("   [" + toDoList[i].getStatusIcon() + "] " +
+                toDoList[i].getDescription());
         System.out.println("____________________________________________________________");
     }
 
-    public static void add(Task[] toDo, String command) {
-        for (int i = 0; i < toDo.length; i++) {
-            if (toDo[i] == null) {
+    public static void add(Task[] toDoList, String command) {
+        for (int i = 0; i < toDoList.length; i++) {
+            if (toDoList[i] == null) {
                 Task newTask = new Task(command);
-                toDo[i] = newTask;
+                toDoList[i] = newTask;
                 break;
             }
         }
@@ -108,17 +97,17 @@ public class Amadinho {
         System.out.println("____________________________________________________________");
     }
 
-    public static void list(Task[] toDo) {
+    public static void list(Task[] toDoList) {
         int counter = 1;
 
         System.out.println("____________________________________________________________");
 
-        for (int i = 0; i < toDo.length; i++) {
-            if (toDo[i] == null) {
+        for (int i = 0; i < toDoList.length; i++) {
+            if (toDoList[i] == null) {
                 break;
             } else {
-                System.out.println(counter + ". [" + toDo[i].getStatusIcon() + "] " +
-                        toDo[i].getDescription());
+                System.out.println(counter + ". [" + toDoList[i].getStatusIcon() + "] " +
+                        toDoList[i].getDescription());
                 counter++;
             }
         }
@@ -128,11 +117,18 @@ public class Amadinho {
 
     public static void main(String[] args) {
         Scanner in = new Scanner(System.in);
-        boolean quit = false;
-        Task[] toDo = new Task[100];
+        boolean isFinished = false;
+        Task[] toDoList = new Task[100];
 
-        intro();
-        readInput(in, quit, toDo);
-        exit();
+        System.out.println("____________________________________________________________");
+        System.out.println("Hello! I'm Amadinho!");
+        System.out.println("What can I do for you?");
+        System.out.println("____________________________________________________________");
+
+        readInput(in, isFinished, toDoList);
+
+        System.out.println("____________________________________________________________");
+        System.out.println("Bye. Hope to see you again soon!");
+        System.out.println("____________________________________________________________");
     }
 }
