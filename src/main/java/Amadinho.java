@@ -15,7 +15,7 @@ public class Amadinho {
         System.out.println("____________________________________________________________");
     }
 
-    public static void readInput(Scanner in, boolean quit, String[] toDo) {
+    public static void readInput(Scanner in, boolean quit, Task[] toDo) {
         while (!quit) {
             String command = in.nextLine();
 
@@ -32,10 +32,11 @@ public class Amadinho {
         }
     }
 
-    public static void add(String[] toDo, String command) {
+    public static void add(Task[] toDo, String command) {
         for (int i = 0; i < toDo.length; i++) {
             if (toDo[i] == null) {
-                toDo[i] = command;
+                Task newTask = new Task(command);
+                toDo[i] = newTask;
                 break;
             }
         }
@@ -45,7 +46,7 @@ public class Amadinho {
         System.out.println("____________________________________________________________");
     }
 
-    public static void list(String[] toDo) {
+    public static void list(Task[] toDo) {
         int counter = 1;
 
         System.out.println("____________________________________________________________");
@@ -54,7 +55,8 @@ public class Amadinho {
             if (toDo[i] == null) {
                 break;
             } else {
-                System.out.println(counter + ". " + toDo[i]);
+                System.out.println(counter + ". [" + toDo[i].getStatusIcon() + "] " +
+                        toDo[i].getDescription());
                 counter++;
             }
         }
@@ -65,7 +67,7 @@ public class Amadinho {
     public static void main(String[] args) {
         Scanner in = new Scanner(System.in);
         boolean quit = false;
-        String[] toDo = new String[100];
+        Task[] toDo = new Task[100];
 
         intro();
         readInput(in, quit, toDo);
