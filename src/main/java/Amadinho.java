@@ -44,10 +44,15 @@ public class Amadinho {
         int numberPosition = command.indexOf(" ");
         int number = Integer.parseInt(command.substring(numberPosition + 1)) - 1;
 
-        // counter for while loop
+        // counter for do while loop
         int i = 0;
 
         do {
+            // exception for out of bounds
+            if (toDo[i] == null) {
+                throw new IndexOutOfBoundsException("Index out of bounds");
+            }
+
             if (i == number) {
                 toDo[i].markAsDone();
                 break;
@@ -66,10 +71,15 @@ public class Amadinho {
         int numberPosition = command.indexOf(" ");
         int number = Integer.parseInt(command.substring(numberPosition + 1)) - 1;
 
-        // counter for while loop
+        // counter for do while loop
         int i = 0;
 
         do {
+            // exception for out of bounds
+            if (toDo[i] == null) {
+                throw new IndexOutOfBoundsException("Index out of bounds");
+            }
+
             if (i == number) {
                 toDo[i].markAsUndone();
                 break;
