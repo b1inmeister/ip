@@ -19,18 +19,55 @@ public class Amadinho {
         while (!quit) {
             String command = in.nextLine();
 
-            switch (command) {
-            case "bye":
-                quit = true;
-                break;
-            case "list":
-                list(toDo);
-                break;
-            default:
-                add(toDo, command);
+            // trigger for mark / unmark
+            if(command.startsWith("mark")) {
+                mark(toDo, command);
+            } else if (command.startsWith("unmark")) {
+                // unmark(toDo, command);
+            } else {
+                // trigger for other commands (add / list / bye)
+                switch (command) {
+                case "bye":
+                    quit = true;
+                    break;
+                case "list":
+                    list(toDo);
+                    break;
+                default:
+                    add(toDo, command);
+                }
             }
         }
     }
+
+    public static void mark(Task[] toDo, String command) {
+        int numberPosition = command.indexOf(" ");
+        int number = Integer.parseInt(command.substring(numberPosition + 1)) - 1;
+
+        // counter for while loop
+        int i = 0;
+
+        do {
+            if (i == number) {
+                toDo[i].markAsDone();
+                break;
+            }
+
+            i++;
+        } while (i <= number);
+
+        System.out.println("____________________________________________________________");
+        System.out.println("Nice! I've marked this task as done:");
+        System.out.println("   [" + toDo[i].getStatusIcon() + "] " + toDo[i].getDescription());
+        System.out.println("____________________________________________________________");
+    }
+
+    /* public static void unmark(Task[] toDo, String command) {
+        System.out.println("____________________________________________________________");
+        System.out.println("OK, I've marked this task as not done yet:");
+        System.out.println(" ");
+        System.out.println("____________________________________________________________");
+    } */
 
     public static void add(Task[] toDo, String command) {
         for (int i = 0; i < toDo.length; i++) {
