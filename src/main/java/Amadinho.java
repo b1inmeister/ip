@@ -23,7 +23,7 @@ public class Amadinho {
             if(command.startsWith("mark")) {
                 mark(toDo, command);
             } else if (command.startsWith("unmark")) {
-                // unmark(toDo, command);
+                unmark(toDo, command);
             } else {
                 // trigger for other commands (add / list / bye)
                 switch (command) {
@@ -62,12 +62,27 @@ public class Amadinho {
         System.out.println("____________________________________________________________");
     }
 
-    /* public static void unmark(Task[] toDo, String command) {
+    public static void unmark(Task[] toDo, String command) {
+        int numberPosition = command.indexOf(" ");
+        int number = Integer.parseInt(command.substring(numberPosition + 1)) - 1;
+
+        // counter for while loop
+        int i = 0;
+
+        do {
+            if (i == number) {
+                toDo[i].markAsUndone();
+                break;
+            }
+
+            i++;
+        } while (i <= number);
+
         System.out.println("____________________________________________________________");
         System.out.println("OK, I've marked this task as not done yet:");
-        System.out.println(" ");
+        System.out.println("   [" + toDo[i].getStatusIcon() + "] " + toDo[i].getDescription());
         System.out.println("____________________________________________________________");
-    } */
+    }
 
     public static void add(Task[] toDo, String command) {
         for (int i = 0; i < toDo.length; i++) {
