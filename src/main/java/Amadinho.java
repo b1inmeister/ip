@@ -1,7 +1,6 @@
 import java.util.Scanner;
 
 public class Amadinho {
-
     public static void readInput(Scanner in, boolean isFinished, Task[] toDoList) {
         while (!isFinished) {
             String command = in.nextLine();
