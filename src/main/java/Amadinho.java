@@ -49,8 +49,7 @@ public class Amadinho {
 
         System.out.println("____________________________________________________________");
         System.out.println("Nice! I've marked this task as done:");
-        System.out.println("   [" + toDoList[i].getStatusIcon() + "] " +
-                toDoList[i].getDescription());
+        System.out.println((i + 1) + "." + toDoList[i]);
         System.out.println("____________________________________________________________");
     }
 
@@ -77,35 +76,82 @@ public class Amadinho {
 
         System.out.println("____________________________________________________________");
         System.out.println("OK, I've marked this task as not done yet:");
-        System.out.println("   [" + toDoList[i].getStatusIcon() + "] " +
-                toDoList[i].getDescription());
+        System.out.println((i + 1) + "." + toDoList[i]);
         System.out.println("____________________________________________________________");
     }
 
     public static void add(Task[] toDoList, String command) {
         for (int i = 0; i < toDoList.length; i++) {
             if (toDoList[i] == null) {
-                Task newTask = new Task(command);
-                toDoList[i] = newTask;
-                break;
+                if (command.contains("deadline")) {
+                    int indexDeadline = command.indexOf("deadline");
+                    int indexBy = command.indexOf("/by");
+
+                    String description = command.substring(indexDeadline + 9, indexBy - 1);
+                    String by = command.substring(indexBy + 4);
+
+                    Deadline newDeadline = new Deadline(description, by);
+                    toDoList[i] = newDeadline;
+
+                    System.out.println("____________________________________________________________");
+                    System.out.println("Got it. I've added this task:");
+                    System.out.println("  " + newDeadline);
+                    System.out.println("Now you have " + (i + 1) + " tasks in the list.");
+                    System.out.println("____________________________________________________________");
+                    break;
+                } else if (command.contains("event")) {
+                    int indexEvent = command.indexOf("event");
+                    int indexFrom = command.indexOf("/from");
+                    int indexTo = command.indexOf("/to");
+
+                    String description = command.substring(indexEvent + 6, indexFrom - 1);
+                    String from = command.substring(indexFrom + 6, indexTo - 1);
+                    String to = command.substring(indexTo + 4);
+
+                    Event newEvent = new Event(description, from, to);
+                    toDoList[i] = newEvent;
+
+                    System.out.println("____________________________________________________________");
+                    System.out.println("Got it. I've added this task:");
+                    System.out.println("  " + newEvent);
+                    System.out.println("Now you have " + (i + 1) + " tasks in the list.");
+                    System.out.println("____________________________________________________________");
+                    break;
+                } else if (command.contains("todo")) {
+                    int indexTodo = command.indexOf("todo");
+
+                    String description = command.substring(indexTodo + 5);
+
+                    Todo newTodo = new Todo(description);
+                    toDoList[i] = newTodo;
+
+                    System.out.println("____________________________________________________________");
+                    System.out.println("Got it. I've added this task:");
+                    System.out.println("  " + newTodo);
+                    System.out.println("Now you have " + (i + 1) + " tasks in the list.");
+                    System.out.println("____________________________________________________________");
+                    break;
+                } else {
+                    System.out.println("____________________________________________________________");
+                    System.out.println("Invalid command. Please try again.");
+                    System.out.println("____________________________________________________________");
+                    break;
+                }
             }
         }
-
-        System.out.println("____________________________________________________________");
-        System.out.println("added: " + command);
-        System.out.println("____________________________________________________________");
     }
 
     public static void list(Task[] toDoList) {
         int counter = 1;
 
         System.out.println("____________________________________________________________");
+        System.out.println("Here are the tasks in your list:");
 
         for (int i = 0; i < toDoList.length; i++) {
             if (toDoList[i] == null) {
                 break;
             } else {
-                System.out.println(counter + ". " + toDoList[i]);
+                System.out.println(counter + "." + toDoList[i]);
                 counter++;
             }
         }
