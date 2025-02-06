@@ -105,8 +105,7 @@ public class Amadinho {
             if (toDoList[i] == null) {
                 break;
             } else {
-                System.out.println(counter + ". [" + toDoList[i].getStatusIcon() + "] " +
-                        toDoList[i].getDescription());
+                System.out.println(counter + ". " + toDoList[i]);
                 counter++;
             }
         }
