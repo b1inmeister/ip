@@ -36,23 +36,31 @@ public class Amadinho {
         welcomeMessage();
 
         while (true) {
-            String userCommand = in.next();
-            String information = in.nextLine().trim();
+            String userCommand = readCommand(in);
+            String information = readInfo(in);
 
-            if (userCommand.equals(COMMAND_BYE)) {
-                break;
-            }
-
+            if (isCompleted(userCommand)) break;
             executeCommand(taskList, userCommand, information);
         }
 
         exitMessage();
     }
 
-
-    /*
-     * COMMAND-RELATED FUNCTIONS
+    /**
+     * COMMAND-RELATED METHODS
      */
+
+    public static String readCommand(Scanner in) {
+        return in.next();
+    }
+
+    public static String readInfo(Scanner in) {
+        return in.nextLine().trim();
+    }
+
+    public static boolean isCompleted(String userCommand) {
+        return userCommand.equals(COMMAND_BYE);
+    }
 
     public static void executeCommand(Task[] taskList, String userCommand, String information) {
         switch (userCommand) {
@@ -60,10 +68,10 @@ public class Amadinho {
             commandList(taskList);
             break;
         case COMMAND_MARK:
-            commandMark(taskList);
+            commandMark(taskList, information);
             break;
         case COMMAND_UNMARK:
-            commandUnmark(taskList);
+            commandUnmark(taskList, information);
             break;
         case COMMAND_TODO:
             commandTodo(taskList, information);
@@ -81,10 +89,14 @@ public class Amadinho {
     }
 
     public static void commandList(Task[] taskList) {
-        int taskCounter = LIST_COUNTER_START;
-
         System.out.println(BORDER_LINE);
         System.out.println(MESSAGE_LIST_INTRO);
+        printList(taskList);
+        System.out.println(BORDER_LINE);
+    }
+
+    public static void printList(Task[] taskList) {
+        int taskCounter = LIST_COUNTER_START;
 
         for (int arrayCounter = COUNTER_START; arrayCounter < taskList.length; arrayCounter++) {
             if (taskList[arrayCounter] == null) {
@@ -94,14 +106,18 @@ public class Amadinho {
                 taskCounter++;
             }
         }
-
-        System.out.println(BORDER_LINE);
     }
 
-    // broken
-    public static void commandMark(Task[] taskList) {
-        Scanner in = new Scanner(System.in);
-        int taskPosition = in.nextInt();
+    public static void commandMark(Task[] taskList, String information) {
+        executeMark(taskList, information, true);
+    }
+
+    public static void commandUnmark(Task[] taskList, String information) {
+        executeMark(taskList, information, false);
+    }
+
+    public static void executeMark(Task[] taskList, String information, boolean toMark) {
+        int taskCount = Integer.parseInt(information);
 
         // counter for do while loop
         int arrayCounter = COUNTER_START;
@@ -111,45 +127,20 @@ public class Amadinho {
                 errorOutOfBounds();
             }
 
-            if (arrayCounter == taskPosition - ARRAY_INCREMENT) {
-                taskList[arrayCounter].markAsDone();
+            if (arrayCounter == taskCount - ARRAY_INCREMENT) {
+                if (toMark) {
+                    taskList[arrayCounter].markAsDone();
+                } else {
+                    taskList[arrayCounter].markAsUndone();
+                }
+
                 break;
             }
 
             arrayCounter++;
-        } while (arrayCounter <= taskPosition);
+        } while (arrayCounter <= taskCount);
 
-        System.out.println(BORDER_LINE);
-        System.out.println(MESSAGE_MARK_COMPLETE);
-        System.out.println((taskPosition) + "." + taskList[arrayCounter]);
-        System.out.println(BORDER_LINE);
-    }
-
-    // broken
-    public static void commandUnmark(Task[] taskList) {
-        Scanner in = new Scanner(System.in);
-        int taskPosition = in.nextInt();
-
-        // counter for do while loop
-        int arrayCounter = COUNTER_START;
-
-        do {
-            if (taskList[arrayCounter] == null) {
-                errorOutOfBounds();
-            }
-
-            if (arrayCounter == taskPosition - ARRAY_INCREMENT) {
-                taskList[arrayCounter].markAsUndone();
-                break;
-            }
-
-            arrayCounter++;
-        } while (arrayCounter <= taskPosition);
-
-        System.out.println(BORDER_LINE);
-        System.out.println(MESSAGE_UNMARK_COMPLETE);
-        System.out.println((taskPosition) + "." + taskList[arrayCounter]);
-        System.out.println(BORDER_LINE);
+        markCommandMessage(taskCount, taskList[arrayCounter], toMark);
     }
 
     public static void commandTodo(Task[] taskList, String information) {
@@ -157,20 +148,16 @@ public class Amadinho {
 
         insertIntoTaskList(taskList, newTodo);
     }
-
-
-
+    
     // incomplete
     public static void commandDeadline(Task[] taskList, String information) {
         Todo newTodo = new Todo(information);
-
         insertIntoTaskList(taskList, newTodo);
     }
 
     // incomplete
     public static void commandEvent(Task[] taskList, String information) {
         Todo newTodo = new Todo(information);
-
         insertIntoTaskList(taskList, newTodo);
     }
 
@@ -178,14 +165,14 @@ public class Amadinho {
         for (int arrayCounter = COUNTER_START; arrayCounter < taskList.length; arrayCounter++) {
             if (taskList[arrayCounter] == null) {
                 taskList[arrayCounter] = newTodo;
-                completeMessage(newTodo, arrayCounter);
+                addCommandMessage(newTodo, arrayCounter);
                 break;
             }
         }
     }
 
 
-    /*
+    /**
      * MESSAGE-RELATED METHODS
      */
 
@@ -202,7 +189,20 @@ public class Amadinho {
         System.out.println(BORDER_LINE);
     }
 
-    public static void completeMessage(Task newTask, int arrayCounter) {
+    private static void markCommandMessage(int taskCount, Task taskList, boolean toMark) {
+        System.out.println(BORDER_LINE);
+
+        if (toMark) {
+            System.out.println(MESSAGE_MARK_COMPLETE);
+        } else {
+            System.out.println(MESSAGE_UNMARK_COMPLETE);
+        }
+
+        System.out.println(taskCount + "." + taskList);
+        System.out.println(BORDER_LINE);
+    }
+
+    public static void addCommandMessage(Task newTask, int arrayCounter) {
         int totalTasks = arrayCounter + ARRAY_INCREMENT;
 
         System.out.println(BORDER_LINE);
@@ -216,7 +216,8 @@ public class Amadinho {
         return "Now you have " + totalTasks + " tasks in the list.";
     }
 
-    /*
+
+    /**
      * ERROR-RELATED METHODS
      */
 
@@ -229,4 +230,6 @@ public class Amadinho {
         System.out.println(MESSAGE_ERROR_INVALID_COMMAND);
         System.out.println(BORDER_LINE);
     }
+
+
 }
