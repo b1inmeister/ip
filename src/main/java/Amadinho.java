@@ -8,6 +8,7 @@ public class Amadinho {
     public static final int START_OF_STRING = 0;
 
     public static final String COMMAND_BYE = "bye";
+    public static final String COMMAND_ERROR = "error";
     public static final String COMMAND_LIST = "list";
     public static final String COMMAND_MARK = "mark";
     public static final String COMMAND_UNMARK = "unmark";
@@ -30,15 +31,18 @@ public class Amadinho {
             To give up and exit                 bye""";
     public static final String MESSAGE_EXIT = "Congrats! You have given up.";
 
-    public static final String MESSAGE_LIST_INTRO = "Here are the tasks in your list:";
-    public static final String MESSAGE_MARK_COMPLETE = "Nice! I've marked this task as done:";
-    public static final String MESSAGE_UNMARK_COMPLETE = "OK, I've marked this task as not done yet:";
-    public static final String MESSAGE_ADDED_TASK = "Got it. I've added this task:";
-    public static final String MESSAGE_TOTALTASKS_FRONT = "Now you have ";
-    public static final String MESSAGE_TOTALTASKS_BACK = " tasks in the list.";
+    public static final String MESSAGE_LIST_INTRO = "Tasks in the list:";
+    public static final String MESSAGE_MARK_COMPLETE = "Task marked as done:";
+    public static final String MESSAGE_UNMARK_COMPLETE = "Task marked as not done:";
+    public static final String MESSAGE_ADDED_TASK = "Task added:";
+    public static final String MESSAGE_TOTALTASKS = "Number of tasks: ";
 
-    public static final String MESSAGE_ERROR_INVALID_COMMAND = "Invalid command. Please try again.";
+    public static final String MESSAGE_LIST_EMPTY = "The list is empty. Lazy bum.";
     public static final String MESSAGE_ERROR_OUTOFBOUNDS = "Number provided is not in the list.";
+    public static final String MESSAGE_ERROR_INVALID_COMMAND = "Invalid command. Skill issue.";
+    public static final String MESSAGE_ERROR_INVALID_COMMAND_MARK = "mark / unmark <integer>";
+    public static final String MESSAGE_ERROR_INVALID_COMMAND_DEADLINE = "deadline <description> /by <deadline>";
+    public static final String MESSAGE_ERROR_INVALID_COMMAND_EVENT = "event <description> /from <start> /to <end>";
 
     public static final String BORDER_LINE = "____________________________________________________________";
 
@@ -97,15 +101,21 @@ public class Amadinho {
             commandEvent(taskList, information);
             break;
         default:
-            errorInvalidCommand();
+            errorInvalidCommand(COMMAND_ERROR);
             break;
         }
     }
 
     public static void commandList(Task[] taskList) {
         System.out.println(BORDER_LINE);
-        System.out.println(MESSAGE_LIST_INTRO);
-        printList(taskList);
+
+        if (taskList[LIST_COUNTER_START] == null) {
+            System.out.println(MESSAGE_LIST_EMPTY);
+        } else {
+            System.out.println(MESSAGE_LIST_INTRO);
+            printList(taskList);
+        }
+
         System.out.println(BORDER_LINE);
     }
 
@@ -131,7 +141,14 @@ public class Amadinho {
     }
 
     public static void executeMark(Task[] taskList, String information, boolean toMark) {
-        int taskCount = Integer.parseInt(information);
+        int taskCount;
+
+        try {
+            taskCount = Integer.parseInt(information);
+        } catch (NumberFormatException e) {
+            errorInvalidCommand(COMMAND_MARK);
+            return;
+        }
 
         // counter for do while loop
         int arrayCounter = COUNTER_START;
@@ -164,7 +181,7 @@ public class Amadinho {
     
     public static void commandDeadline(Task[] taskList, String information) {
         if (isMissing(information, IDENTIFIER_BY)) {
-            errorInvalidCommand();
+            errorInvalidCommand(COMMAND_DEADLINE);
             return;
         }
 
@@ -179,7 +196,7 @@ public class Amadinho {
 
     public static void commandEvent(Task[] taskList, String information) {
         if (isMissing(information, IDENTIFIER_FROM) || isMissing(information, IDENTIFIER_TO)) {
-            errorInvalidCommand();
+            errorInvalidCommand(COMMAND_EVENT);
             return;
         }
 
@@ -261,7 +278,7 @@ public class Amadinho {
     }
 
     public static String printTotalTasks(int totalTasks) {
-        return MESSAGE_TOTALTASKS_FRONT + totalTasks + MESSAGE_TOTALTASKS_BACK;
+        return MESSAGE_TOTALTASKS + totalTasks;
     }
 
 
@@ -274,11 +291,25 @@ public class Amadinho {
     }
 
     // tip: use switch statement for customised messages
-    public static void errorInvalidCommand() {
+    public static void errorInvalidCommand(String command) {
         System.out.println(BORDER_LINE);
         System.out.println(MESSAGE_ERROR_INVALID_COMMAND);
+
+        switch (command) {
+        case COMMAND_MARK:
+            System.out.println(MESSAGE_ERROR_INVALID_COMMAND_MARK);
+            break;
+        case COMMAND_DEADLINE:
+            System.out.println(MESSAGE_ERROR_INVALID_COMMAND_DEADLINE);
+            break;
+        case COMMAND_EVENT:
+            System.out.println(MESSAGE_ERROR_INVALID_COMMAND_EVENT);
+            break;
+        default:
+            System.out.println(MESSAGE_WELCOME);
+            break;
+        }
+
         System.out.println(BORDER_LINE);
     }
-
-
 }
