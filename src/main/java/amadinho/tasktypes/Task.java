@@ -9,17 +9,8 @@ public class Task {
         this.isDone = false;
     }
 
-    @Override
-    public String toString() {
-        return "[" + getStatusIcon() + "] " + description;
-    }
-
     public String getStatusIcon() {
         return (isDone ? "X" : " ");
-    }
-
-    public String getDescription() {
-        return description;
     }
 
     public void markAsDone() {
@@ -28,5 +19,10 @@ public class Task {
 
     public void markAsUndone() {
         isDone = false;
+    }
+
+    @Override
+    public String toString() {
+        return "[" + getStatusIcon() + "] " + description;
     }
 }
