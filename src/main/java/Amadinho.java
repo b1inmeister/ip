@@ -41,8 +41,12 @@ public class Amadinho {
     public static final String MESSAGE_ERROR_OUTOFBOUNDS = "Number provided is not in the list.";
     public static final String MESSAGE_ERROR_INVALID_COMMAND = "Invalid command. Skill issue.";
     public static final String MESSAGE_ERROR_INVALID_COMMAND_MARK = "mark / unmark <integer>";
-    public static final String MESSAGE_ERROR_INVALID_COMMAND_DEADLINE = "deadline <description> /by <deadline>";
-    public static final String MESSAGE_ERROR_INVALID_COMMAND_EVENT = "event <description> /from <start> /to <end>";
+    public static final String MESSAGE_ERROR_INVALID_COMMAND_TODO = MESSAGE_ERROR_INVALID_COMMAND
+            + "\n" + "todo <description>";
+    public static final String MESSAGE_ERROR_INVALID_COMMAND_DEADLINE = MESSAGE_ERROR_INVALID_COMMAND
+            + "\n" + "deadline <description> /by <deadline>";
+    public static final String MESSAGE_ERROR_INVALID_COMMAND_EVENT = MESSAGE_ERROR_INVALID_COMMAND
+            + "\n" +  "event <description> /from <start> /to <end>";
 
     public static final String BORDER_LINE = "____________________________________________________________";
 
@@ -57,14 +61,18 @@ public class Amadinho {
             String userCommand = readCommand(in);
             String information = readInfo(in);
 
-            if (isCompleted(userCommand)) break;
+            if (isCompleted(userCommand)) {
+                break;
+            }
+
             executeCommand(taskList, userCommand, information);
         }
 
         exitMessage();
     }
 
-    /**
+
+    /*
      * COMMAND-RELATED METHODS
      */
 
@@ -81,42 +89,47 @@ public class Amadinho {
     }
 
     public static void executeCommand(Task[] taskList, String userCommand, String information) {
-        switch (userCommand) {
-        case COMMAND_LIST:
-            commandList(taskList);
-            break;
-        case COMMAND_MARK:
-            commandMark(taskList, information);
-            break;
-        case COMMAND_UNMARK:
-            commandUnmark(taskList, information);
-            break;
-        case COMMAND_TODO:
-            commandTodo(taskList, information);
-            break;
-        case COMMAND_DEADLINE:
-            commandDeadline(taskList, information);
-            break;
-        case COMMAND_EVENT:
-            commandEvent(taskList, information);
-            break;
-        default:
-            errorInvalidCommand(COMMAND_ERROR);
-            break;
+        try {
+            switch (userCommand) {
+            case COMMAND_LIST:
+                commandList(taskList);
+                break;
+            case COMMAND_MARK:
+                commandMark(taskList, information);
+                break;
+            case COMMAND_UNMARK:
+                commandUnmark(taskList, information);
+                break;
+            case COMMAND_TODO:
+                commandTodo(taskList, information);
+                break;
+            case COMMAND_DEADLINE:
+                commandDeadline(taskList, information);
+                break;
+            case COMMAND_EVENT:
+                commandEvent(taskList, information);
+                break;
+            default:
+                errorInvalidCommand(MESSAGE_ERROR_INVALID_COMMAND);
+            }
+        } catch (InvalidCommand e) {
+            errorPrinting(e);
         }
     }
 
     public static void commandList(Task[] taskList) {
-        System.out.println(BORDER_LINE);
-
-        if (taskList[LIST_COUNTER_START] == null) {
-            System.out.println(MESSAGE_LIST_EMPTY);
-        } else {
-            System.out.println(MESSAGE_LIST_INTRO);
-            printList(taskList);
+        try {
+            if (taskList[LIST_COUNTER_START] == null) {
+                errorEmptyList(MESSAGE_LIST_EMPTY);
+            } else {
+                System.out.println(BORDER_LINE);
+                System.out.println(MESSAGE_LIST_INTRO);
+                printList(taskList);
+                System.out.println(BORDER_LINE);
+            }
+        } catch (EmptyList e) {
+            errorPrinting(e);
         }
-
-        System.out.println(BORDER_LINE);
     }
 
     public static void printList(Task[] taskList) {
@@ -146,69 +159,87 @@ public class Amadinho {
         try {
             taskCount = Integer.parseInt(information);
         } catch (NumberFormatException e) {
-            errorInvalidCommand(COMMAND_MARK);
+            printNumberFormatExceptionMessage();
             return;
         }
 
         // counter for do while loop
         int arrayCounter = COUNTER_START;
 
-        do {
-            if (taskList[arrayCounter] == null) {
-                errorOutOfBounds();
-            }
-
-            if (arrayCounter == taskCount - ARRAY_INCREMENT) {
-                if (toMark) {
-                    taskList[arrayCounter].markAsDone();
-                } else {
-                    taskList[arrayCounter].markAsUndone();
+        try {
+            do {
+                if (taskList[arrayCounter] == null) {
+                    errorOutOfBounds(MESSAGE_ERROR_OUTOFBOUNDS);
                 }
 
-                break;
-            }
+                if (arrayCounter == taskCount - ARRAY_INCREMENT) {
+                    if (toMark) {
+                        taskList[arrayCounter].markAsDone();
+                    } else {
+                        taskList[arrayCounter].markAsUndone();
+                    }
 
-            arrayCounter++;
-        } while (arrayCounter <= taskCount);
+                    break;
+                }
 
-        markCommandMessage(taskCount, taskList[arrayCounter], toMark);
-    }
+                arrayCounter++;
+            } while (arrayCounter <= taskCount);
 
-    public static void commandTodo(Task[] taskList, String information) {
-        Todo newTodo = new Todo(information);
-        insertIntoTaskList(taskList, newTodo);
+            markCommandMessage(taskCount, taskList[arrayCounter], toMark);
+        } catch (IndexOutOfBoundsException e) {
+            errorPrinting(e);
+        }
     }
     
-    public static void commandDeadline(Task[] taskList, String information) {
-        if (isMissing(information, IDENTIFIER_BY)) {
-            errorInvalidCommand(COMMAND_DEADLINE);
-            return;
+    public static void commandTodo(Task[] taskList, String information) {
+        try {
+            if (isEmpty(information)) {
+                errorInvalidCommand(MESSAGE_ERROR_INVALID_COMMAND_TODO);
+            }
+
+            Todo newTodo = new Todo(information);
+            insertIntoTaskList(taskList, newTodo);
+        } catch (InvalidCommand e) {
+            errorPrinting(e);
         }
+    }
 
-        int descriptionPosition = findIndex(information, IDENTIFIER_BY);
+    public static void commandDeadline(Task[] taskList, String information) {
+        try {
+            if (isMissing(information, IDENTIFIER_BY)) {
+                errorInvalidCommand(MESSAGE_ERROR_INVALID_COMMAND_DEADLINE);
+            }
 
-        String description = generateSubstring(information, START_OF_STRING, descriptionPosition);
-        String by = generateSubstring(information, descriptionPosition + LENGTH_BY);
+            int descriptionPosition = findIndex(information, IDENTIFIER_BY);
 
-        Deadline newDeadline = new Deadline(description, by);
-        insertIntoTaskList(taskList, newDeadline);
+            String description = generateSubstring(information, START_OF_STRING, descriptionPosition);
+            String by = generateSubstring(information, descriptionPosition + LENGTH_BY);
+
+            Deadline newDeadline = new Deadline(description, by);
+            insertIntoTaskList(taskList, newDeadline);
+        } catch (InvalidCommand e) {
+            errorPrinting(e);
+        }
     }
 
     public static void commandEvent(Task[] taskList, String information) {
-        if (isMissing(information, IDENTIFIER_FROM) || isMissing(information, IDENTIFIER_TO)) {
-            errorInvalidCommand(COMMAND_EVENT);
-            return;
+        try {
+            if (isMissing(information, IDENTIFIER_FROM) || isMissing(information, IDENTIFIER_TO)) {
+               errorInvalidCommand(MESSAGE_ERROR_INVALID_COMMAND_EVENT);
+            }
+
+            int descriptionPosition = findIndex(information, IDENTIFIER_FROM);
+            int toPosition = findIndex(information, IDENTIFIER_TO);
+
+            String description = generateSubstring(information, START_OF_STRING, descriptionPosition);
+            String from = generateSubstring(information, descriptionPosition + LENGTH_FROM, toPosition);
+            String to = generateSubstring(information, toPosition + LENGTH_TO);
+
+            Event newEvent = new Event(description, from, to);
+            insertIntoTaskList(taskList, newEvent);
+        } catch (InvalidCommand e) {
+            errorPrinting(e);
         }
-
-        int descriptionPosition = findIndex(information, IDENTIFIER_FROM);
-        int toPosition = findIndex(information, IDENTIFIER_TO);
-
-        String description = generateSubstring(information, START_OF_STRING, descriptionPosition);
-        String from = generateSubstring(information, descriptionPosition + LENGTH_FROM, toPosition);
-        String to = generateSubstring(information, toPosition + LENGTH_TO);
-
-        Event newEvent = new Event(description, from, to);
-        insertIntoTaskList(taskList, newEvent);
     }
 
     public static void insertIntoTaskList(Task[] taskList, Task newTask) {
@@ -219,6 +250,10 @@ public class Amadinho {
                 break;
             }
         }
+    }
+
+    public static boolean isEmpty(String information) {
+        return information.isEmpty();
     }
 
     public static boolean isMissing(String information, String identifier) {
@@ -238,7 +273,7 @@ public class Amadinho {
     }
 
 
-    /**
+    /*
      * MESSAGE-RELATED METHODS
      */
 
@@ -282,34 +317,32 @@ public class Amadinho {
     }
 
 
-    /**
+    /*
      * ERROR-RELATED METHODS
      */
 
-    public static void errorOutOfBounds() {
-        throw new IndexOutOfBoundsException(MESSAGE_ERROR_OUTOFBOUNDS);
+    public static void errorInvalidCommand(String message) throws InvalidCommand {
+        throw new InvalidCommand(message);
     }
 
-    // tip: use switch statement for customised messages
-    public static void errorInvalidCommand(String command) {
+    public static void errorOutOfBounds(String message) throws IndexOutOfBoundsException {
+        throw new IndexOutOfBoundsException(message);
+    }
+
+    public static void errorEmptyList(String message) throws EmptyList {
+        throw new EmptyList(message);
+    }
+
+    public static void errorPrinting(Exception e) {
+        System.out.println(BORDER_LINE);
+        System.out.println(e.getMessage());
+        System.out.println(BORDER_LINE);
+    }
+
+    public static void printNumberFormatExceptionMessage() {
         System.out.println(BORDER_LINE);
         System.out.println(MESSAGE_ERROR_INVALID_COMMAND);
-
-        switch (command) {
-        case COMMAND_MARK:
-            System.out.println(MESSAGE_ERROR_INVALID_COMMAND_MARK);
-            break;
-        case COMMAND_DEADLINE:
-            System.out.println(MESSAGE_ERROR_INVALID_COMMAND_DEADLINE);
-            break;
-        case COMMAND_EVENT:
-            System.out.println(MESSAGE_ERROR_INVALID_COMMAND_EVENT);
-            break;
-        default:
-            System.out.println(MESSAGE_WELCOME);
-            break;
-        }
-
+        System.out.println(MESSAGE_ERROR_INVALID_COMMAND_MARK);
         System.out.println(BORDER_LINE);
     }
 }
