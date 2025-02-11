@@ -1,3 +1,7 @@
+package amadinho.ui;
+
+import amadinho.tasktypes.*;
+import amadinho.exceptions.*;
 import java.util.Scanner;
 
 public class Amadinho {
@@ -8,7 +12,6 @@ public class Amadinho {
     public static final int START_OF_STRING = 0;
 
     public static final String COMMAND_BYE = "bye";
-    public static final String COMMAND_ERROR = "error";
     public static final String COMMAND_LIST = "list";
     public static final String COMMAND_MARK = "mark";
     public static final String COMMAND_UNMARK = "unmark";
