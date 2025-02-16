@@ -1,10 +1,8 @@
 package amadinho.ui;
 
 public class Constants {
-    protected static final int LIST_MAX_VALUE = 100;
     protected static final int LIST_COUNTER_START = 1;
     protected static final int ARRAY_INCREMENT = 1;
-    protected static final int COUNTER_START = 0;
     protected static final int START_OF_STRING = 0;
 
     protected static final String COMMAND_BYE = "bye";
