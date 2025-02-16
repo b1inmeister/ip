@@ -3,6 +3,7 @@ package amadinho.ui;
 import static amadinho.ui.Constants.*;
 import amadinho.tasktypes.*;
 import amadinho.exceptions.*;
+
 import java.util.Scanner;
 import java.util.ArrayList;
 
@@ -55,6 +56,9 @@ public class Amadinho {
                 break;
             case COMMAND_UNMARK:
                 commandUnmark(taskList, information);
+                break;
+            case COMMAND_DELETE:
+                commandDelete(taskList, information);
                 break;
             case COMMAND_TODO:
                 commandTodo(taskList, information);
@@ -111,7 +115,7 @@ public class Amadinho {
         try {
             taskCount = Integer.parseInt(information);
         } catch (NumberFormatException e) {
-            printNumberFormatExceptionMessage();
+            printNumberFormatExceptionMessage(COMMAND_MARK);
             return;
         }
 
@@ -124,6 +128,22 @@ public class Amadinho {
         }
 
         markCommandMessage(taskCount, taskToMark, toMark);
+    }
+
+    private static void commandDelete(ArrayList<Task> taskList, String information) {
+        int taskCount;
+
+        try {
+            taskCount = Integer.parseInt(information);
+        } catch (NumberFormatException e) {
+            printNumberFormatExceptionMessage(COMMAND_DELETE);
+            return;
+        }
+
+        Task taskToDelete = taskList.get(taskCount - ARRAY_INCREMENT);
+        taskList.remove(taskCount - ARRAY_INCREMENT);
+
+        deleteCommandMessage(taskList, taskCount, taskToDelete);
     }
 
     private static void commandTodo(ArrayList<Task> taskList, String information) {
@@ -232,6 +252,16 @@ public class Amadinho {
         System.out.println(BORDER_LINE);
     }
 
+    private static void deleteCommandMessage(ArrayList<Task> taskList, int taskCount, Task taskToDelete) {
+        int totalTasks = taskList.size();
+
+        System.out.println(BORDER_LINE);
+        System.out.println(MESSAGE_DELETED_TASK);
+        System.out.println("  " + taskToDelete);
+        System.out.println(printTotalTasks(totalTasks));
+        System.out.println(BORDER_LINE);
+    }
+
     private static void addCommandMessage(ArrayList<Task> taskList, Task newTask) {
         int totalTasks = taskList.size();
 
@@ -265,10 +295,16 @@ public class Amadinho {
         System.out.println(BORDER_LINE);
     }
 
-    private static void printNumberFormatExceptionMessage() {
+    private static void printNumberFormatExceptionMessage(String message) {
         System.out.println(BORDER_LINE);
         System.out.println(MESSAGE_ERROR_INVALID_COMMAND);
-        System.out.println(MESSAGE_ERROR_INVALID_COMMAND_MARK);
+
+        if (message.equals(COMMAND_MARK)) {
+            System.out.println(MESSAGE_ERROR_INVALID_COMMAND_MARK);
+        } else {
+            System.out.println(MESSAGE_ERROR_INVALID_COMMAND_DELETE);
+        }
+
         System.out.println(BORDER_LINE);
     }
 
