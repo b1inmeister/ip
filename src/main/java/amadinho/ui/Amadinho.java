@@ -3,13 +3,19 @@ package amadinho.ui;
 import static amadinho.ui.Constants.*;
 import amadinho.tasktypes.*;
 import amadinho.exceptions.*;
+
 import java.util.Scanner;
+import java.io.FileWriter;
+//import java.io.File;
+//import java.io.FileNotFoundException;
+import java.io.IOException;
 
 public class Amadinho {
     public static void main(String[] args) {
         Scanner in = new Scanner(System.in);
         Task[] taskList = new Task[LIST_MAX_VALUE];
 
+        //readTextFile(taskList);
         welcomeMessage();
 
         while (true) {
@@ -154,6 +160,7 @@ public class Amadinho {
 
             Todo newTodo = new Todo(information);
             insertIntoTaskList(taskList, newTodo);
+            writeToTextFile(COMMAND_TODO, newTodo);
         } catch (InvalidCommand e) {
             errorPrinting(e);
         }
@@ -172,6 +179,7 @@ public class Amadinho {
 
             Deadline newDeadline = new Deadline(description, by);
             insertIntoTaskList(taskList, newDeadline);
+            writeToTextFile(COMMAND_DEADLINE, newDeadline);
         } catch (InvalidCommand e) {
             errorPrinting(e);
         }
@@ -192,6 +200,7 @@ public class Amadinho {
 
             Event newEvent = new Event(description, from, to);
             insertIntoTaskList(taskList, newEvent);
+            writeToTextFile(COMMAND_EVENT, newEvent);
         } catch (InvalidCommand e) {
             errorPrinting(e);
         }
@@ -225,6 +234,82 @@ public class Amadinho {
 
     private static String generateSubstring(String information, int start) {
         return information.substring(start).trim();
+    }
+
+
+    /*
+     * FILE-RELATED METHODS
+     */
+
+    /*
+    private static void readTextFile(Task[] taskList) {
+        File listFile = new File(LISTFILE_PATHNAME);
+        fileExistCheck(listFile);
+
+        try {
+            Scanner fileInput = new Scanner(listFile);
+
+            while (fileInput.hasNext()) {
+
+            }
+
+            fileInput.close();
+        } catch (FileNotFoundException e) {
+            printFileExceptionsMessage(MESSAGE_ERROR_FILENOTFOUND);
+        }
+    }
+
+    private static void fileExistCheck(File listFile) {
+        try {
+            File directory = listFile.getParentFile();
+
+            if (!directory.exists()) {
+                boolean isCreated = directory.mkdirs();
+
+                if (!isCreated) {
+                    throw new IOException();
+                }
+            }
+
+            if (!listFile.exists()) {
+                boolean isCreated = listFile.createNewFile();
+
+                if (!isCreated) {
+                    throw new IOException();
+                }
+            }
+        } catch (IOException e) {
+            printFileExceptionsMessage(MESSAGE_ERROR_IO);
+        }
+    }
+    */
+
+    private static void writeToTextFile(String userCommand, Task newTask) {
+        try {
+            FileWriter fileWriter = new FileWriter(LISTFILE_PATHNAME, true);
+
+            String defaultString = userCommand + LISTFILE_DIVIDER + newTask.getStatusIcon() + LISTFILE_DIVIDER + newTask.getDescription();
+
+            switch (userCommand) {
+            case COMMAND_TODO:
+                fileWriter.write(defaultString + LISTFILE_NEWLINE);
+                break;
+            case COMMAND_DEADLINE:
+                fileWriter.write(defaultString + LISTFILE_DIVIDER + ((Deadline) newTask).getBy() + LISTFILE_NEWLINE);
+                break;
+            case COMMAND_EVENT:
+                fileWriter.write(defaultString + LISTFILE_DIVIDER + ((Event) newTask).getFrom() + LISTFILE_DIVIDER + ((Event) newTask).getTo() + LISTFILE_NEWLINE);
+                break;
+            default:
+                printFileExceptionsMessage(MESSAGE_ERROR_WRITEFAILED);
+                break;
+            }
+
+            fileWriter.close();
+        } catch (IOException e) {
+            printFileExceptionsMessage(MESSAGE_ERROR_WRITEFAILED);
+        }
+
     }
 
 
@@ -298,6 +383,12 @@ public class Amadinho {
         System.out.println(BORDER_LINE);
         System.out.println(MESSAGE_ERROR_INVALID_COMMAND);
         System.out.println(MESSAGE_ERROR_INVALID_COMMAND_MARK);
+        System.out.println(BORDER_LINE);
+    }
+
+    private static void printFileExceptionsMessage(String message) {
+        System.out.println(BORDER_LINE);
+        System.out.println(message);
         System.out.println(BORDER_LINE);
     }
 
