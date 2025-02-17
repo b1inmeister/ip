@@ -41,6 +41,7 @@ public class Constants {
     protected static final String MESSAGE_ERROR_FILENOTFOUND = "File not found. Just give up.";
     protected static final String MESSAGE_ERROR_IO = "Error creating file / directory. Just give up.";
     protected static final String MESSAGE_ERROR_WRITEFAILED = "Error writing to file. Just give up.";
+    protected static final String MESSAGE_ERROR_READFAILED = "Error reading file. Just give up.";
     protected static final String MESSAGE_ERROR_INVALID_COMMAND = "Invalid command. Skill issue.";
     protected static final String MESSAGE_ERROR_INVALID_COMMAND_MARK = "mark / unmark <integer>";
     protected static final String MESSAGE_ERROR_INVALID_COMMAND_TODO = MESSAGE_ERROR_INVALID_COMMAND

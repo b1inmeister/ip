@@ -13,8 +13,20 @@ public class Task {
         return (isDone ? "X" : " ");
     }
 
+    public String getStatusNumbers() {
+        return (isDone ? "1" : "0");
+    }
+
     public String getDescription() {
         return description;
+    }
+
+    public void setStatusIcon(String statusIcon) {
+        if (statusIcon.equals("1")) {
+            markAsDone();
+        } else if (statusIcon.equals("0")) {
+            markAsUndone();
+        }
     }
 
     public void markAsDone() {

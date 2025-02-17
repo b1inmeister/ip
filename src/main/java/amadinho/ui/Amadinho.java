@@ -6,8 +6,8 @@ import amadinho.exceptions.*;
 
 import java.util.Scanner;
 import java.io.FileWriter;
-//import java.io.File;
-//import java.io.FileNotFoundException;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 
 public class Amadinho {
@@ -15,7 +15,7 @@ public class Amadinho {
         Scanner in = new Scanner(System.in);
         Task[] taskList = new Task[LIST_MAX_VALUE];
 
-        //readTextFile(taskList);
+        readTextFile(taskList);
         welcomeMessage();
 
         while (true) {
@@ -159,7 +159,7 @@ public class Amadinho {
             }
 
             Todo newTodo = new Todo(information);
-            insertIntoTaskList(taskList, newTodo);
+            insertIntoTaskList(taskList, newTodo, true);
             writeToTextFile(COMMAND_TODO, newTodo);
         } catch (InvalidCommand e) {
             errorPrinting(e);
@@ -178,7 +178,7 @@ public class Amadinho {
             String by = generateSubstring(information, descriptionPosition + LENGTH_BY);
 
             Deadline newDeadline = new Deadline(description, by);
-            insertIntoTaskList(taskList, newDeadline);
+            insertIntoTaskList(taskList, newDeadline, true);
             writeToTextFile(COMMAND_DEADLINE, newDeadline);
         } catch (InvalidCommand e) {
             errorPrinting(e);
@@ -199,18 +199,22 @@ public class Amadinho {
             String to = generateSubstring(information, toPosition + LENGTH_TO);
 
             Event newEvent = new Event(description, from, to);
-            insertIntoTaskList(taskList, newEvent);
+            insertIntoTaskList(taskList, newEvent, true);
             writeToTextFile(COMMAND_EVENT, newEvent);
         } catch (InvalidCommand e) {
             errorPrinting(e);
         }
     }
 
-    private static void insertIntoTaskList(Task[] taskList, Task newTask) {
+    private static void insertIntoTaskList(Task[] taskList, Task newTask, boolean isStart) {
         for (int arrayCounter = COUNTER_START; arrayCounter < taskList.length; arrayCounter++) {
             if (taskList[arrayCounter] == null) {
                 taskList[arrayCounter] = newTask;
-                addCommandMessage(newTask, arrayCounter);
+
+                if (isStart) {
+                    addCommandMessage(newTask, arrayCounter);
+                }
+
                 break;
             }
         }
@@ -240,8 +244,7 @@ public class Amadinho {
     /*
      * FILE-RELATED METHODS
      */
-
-    /*
+    
     private static void readTextFile(Task[] taskList) {
         File listFile = new File(LISTFILE_PATHNAME);
         fileExistCheck(listFile);
@@ -250,10 +253,28 @@ public class Amadinho {
             Scanner fileInput = new Scanner(listFile);
 
             while (fileInput.hasNext()) {
+                String userCommand = readCommand(fileInput);
+                String information = fileInput.nextLine();
 
+                switch (userCommand) {
+                case COMMAND_TODO:
+                    readTodo(taskList, information);
+                    break;
+                case COMMAND_DEADLINE:
+                    readDeadline(taskList, information);
+                    break;
+                case COMMAND_EVENT:
+                    readEvent(taskList, information);
+                    break;
+                default:
+                    printFileExceptionsMessage(MESSAGE_ERROR_READFAILED);
+                }
             }
 
             fileInput.close();
+
+            System.out.println(BORDER_LINE);
+            System.out.println("You have ongoing tasks. Procrastinator.");
         } catch (FileNotFoundException e) {
             printFileExceptionsMessage(MESSAGE_ERROR_FILENOTFOUND);
         }
@@ -282,23 +303,49 @@ public class Amadinho {
             printFileExceptionsMessage(MESSAGE_ERROR_IO);
         }
     }
-    */
+
+    private static void readTodo(Task[] taskList, String information) {
+        String[] parts = information.split("\\|");
+
+        Todo newTodo = new Todo(parts[2].trim());
+        newTodo.setStatusIcon(parts[1].trim());
+        insertIntoTaskList(taskList, newTodo, false);
+    }
+
+    private static void readDeadline(Task[] taskList, String information) {
+        String[] parts = information.split("\\|");
+
+        Deadline newDeadline = new Deadline(parts[2].trim(), parts[3].trim());
+        newDeadline.setStatusIcon(parts[1].trim());
+        insertIntoTaskList(taskList, newDeadline, false);
+    }
+
+    private static void readEvent(Task[] taskList, String information) {
+        String[] parts = information.split("\\|");
+
+        Event newEvent = new Event(parts[2].trim(), parts[3].trim(), parts[4].trim());
+        newEvent.setStatusIcon(parts[1].trim());
+        insertIntoTaskList(taskList, newEvent, false);
+    }
 
     private static void writeToTextFile(String userCommand, Task newTask) {
         try {
             FileWriter fileWriter = new FileWriter(LISTFILE_PATHNAME, true);
 
-            String defaultString = userCommand + LISTFILE_DIVIDER + newTask.getStatusIcon() + LISTFILE_DIVIDER + newTask.getDescription();
+            String defaultString = userCommand + LISTFILE_DIVIDER + newTask.getStatusNumbers() +
+                    LISTFILE_DIVIDER + newTask.getDescription();
 
             switch (userCommand) {
             case COMMAND_TODO:
                 fileWriter.write(defaultString + LISTFILE_NEWLINE);
                 break;
             case COMMAND_DEADLINE:
-                fileWriter.write(defaultString + LISTFILE_DIVIDER + ((Deadline) newTask).getBy() + LISTFILE_NEWLINE);
+                fileWriter.write(defaultString + LISTFILE_DIVIDER + ((Deadline) newTask).getBy()
+                        + LISTFILE_NEWLINE);
                 break;
             case COMMAND_EVENT:
-                fileWriter.write(defaultString + LISTFILE_DIVIDER + ((Event) newTask).getFrom() + LISTFILE_DIVIDER + ((Event) newTask).getTo() + LISTFILE_NEWLINE);
+                fileWriter.write(defaultString + LISTFILE_DIVIDER + ((Event) newTask).getFrom()
+                        + LISTFILE_DIVIDER + ((Event) newTask).getTo() + LISTFILE_NEWLINE);
                 break;
             default:
                 printFileExceptionsMessage(MESSAGE_ERROR_WRITEFAILED);
@@ -391,5 +438,4 @@ public class Amadinho {
         System.out.println(message);
         System.out.println(BORDER_LINE);
     }
-
 }
