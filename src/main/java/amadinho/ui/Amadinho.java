@@ -3,12 +3,14 @@ package amadinho.ui;
 import static amadinho.ui.Constants.*;
 import amadinho.tasktypes.*;
 import amadinho.exceptions.*;
+
 import java.util.Scanner;
+import java.util.ArrayList;
 
 public class Amadinho {
     public static void main(String[] args) {
         Scanner in = new Scanner(System.in);
-        Task[] taskList = new Task[LIST_MAX_VALUE];
+        ArrayList<Task> taskList = new ArrayList<>();
 
         welcomeMessage();
 
@@ -43,7 +45,7 @@ public class Amadinho {
         return userCommand.equals(COMMAND_BYE);
     }
 
-    private static void executeCommand(Task[] taskList, String userCommand, String information) {
+    private static void executeCommand(ArrayList<Task> taskList, String userCommand, String information) {
         try {
             switch (userCommand) {
             case COMMAND_LIST:
@@ -54,6 +56,9 @@ public class Amadinho {
                 break;
             case COMMAND_UNMARK:
                 commandUnmark(taskList, information);
+                break;
+            case COMMAND_DELETE:
+                commandDelete(taskList, information);
                 break;
             case COMMAND_TODO:
                 commandTodo(taskList, information);
@@ -72,9 +77,9 @@ public class Amadinho {
         }
     }
 
-    private static void commandList(Task[] taskList) {
+    private static void commandList(ArrayList<Task> taskList) {
         try {
-            if (taskList[LIST_COUNTER_START] == null) {
+            if (taskList.isEmpty()) {
                 errorEmptyList(MESSAGE_LIST_EMPTY);
             } else {
                 System.out.println(BORDER_LINE);
@@ -87,66 +92,61 @@ public class Amadinho {
         }
     }
 
-    private static void printList(Task[] taskList) {
+    private static void printList(ArrayList<Task> taskList) {
         int taskCounter = LIST_COUNTER_START;
 
         for (Task task : taskList) {
-            if (task == null) {
-                break;
-            } else {
-                System.out.println(taskCounter + "." + task);
-                taskCounter++;
-            }
+            System.out.println(taskCounter + "." + task);
+            taskCounter++;
         }
     }
 
-    private static void commandMark(Task[] taskList, String information) {
+    private static void commandMark(ArrayList<Task> taskList, String information) {
         executeMark(taskList, information, true);
     }
 
-    private static void commandUnmark(Task[] taskList, String information) {
+    private static void commandUnmark(ArrayList<Task> taskList, String information) {
         executeMark(taskList, information, false);
     }
 
-    private static void executeMark(Task[] taskList, String information, boolean toMark) {
+    private static void executeMark(ArrayList<Task> taskList, String information, boolean toMark) {
         int taskCount;
 
         try {
             taskCount = Integer.parseInt(information);
         } catch (NumberFormatException e) {
-            printNumberFormatExceptionMessage();
+            printNumberFormatExceptionMessage(COMMAND_MARK);
             return;
         }
 
-        // counter for do while loop
-        int arrayCounter = COUNTER_START;
+        Task taskToMark = taskList.get(taskCount - ARRAY_INCREMENT);
 
-        try {
-            do {
-                if (taskList[arrayCounter] == null) {
-                    errorOutOfBounds(MESSAGE_ERROR_OUTOFBOUNDS);
-                }
-
-                if (arrayCounter == taskCount - ARRAY_INCREMENT) {
-                    if (toMark) {
-                        taskList[arrayCounter].markAsDone();
-                    } else {
-                        taskList[arrayCounter].markAsUndone();
-                    }
-
-                    break;
-                }
-
-                arrayCounter++;
-            } while (arrayCounter <= taskCount);
-
-            markCommandMessage(taskCount, taskList[arrayCounter], toMark);
-        } catch (IndexOutOfBoundsException e) {
-            errorPrinting(e);
+        if(toMark) {
+            taskToMark.markAsDone();
+        } else {
+            taskToMark.markAsUndone();
         }
+
+        markCommandMessage(taskCount, taskToMark, toMark);
     }
 
-    private static void commandTodo(Task[] taskList, String information) {
+    private static void commandDelete(ArrayList<Task> taskList, String information) {
+        int taskCount;
+
+        try {
+            taskCount = Integer.parseInt(information);
+        } catch (NumberFormatException e) {
+            printNumberFormatExceptionMessage(COMMAND_DELETE);
+            return;
+        }
+
+        Task taskToDelete = taskList.get(taskCount - ARRAY_INCREMENT);
+        taskList.remove(taskCount - ARRAY_INCREMENT);
+
+        deleteCommandMessage(taskList, taskCount, taskToDelete);
+    }
+
+    private static void commandTodo(ArrayList<Task> taskList, String information) {
         try {
             if (isEmpty(information)) {
                 errorInvalidCommand(MESSAGE_ERROR_INVALID_COMMAND_TODO);
@@ -159,7 +159,7 @@ public class Amadinho {
         }
     }
 
-    private static void commandDeadline(Task[] taskList, String information) {
+    private static void commandDeadline(ArrayList<Task> taskList, String information) {
         try {
             if (isMissing(information, IDENTIFIER_BY)) {
                 errorInvalidCommand(MESSAGE_ERROR_INVALID_COMMAND_DEADLINE);
@@ -177,7 +177,7 @@ public class Amadinho {
         }
     }
 
-    private static void commandEvent(Task[] taskList, String information) {
+    private static void commandEvent(ArrayList<Task> taskList, String information) {
         try {
             if (isMissing(information, IDENTIFIER_FROM) || isMissing(information, IDENTIFIER_TO)) {
                errorInvalidCommand(MESSAGE_ERROR_INVALID_COMMAND_EVENT);
@@ -197,14 +197,9 @@ public class Amadinho {
         }
     }
 
-    private static void insertIntoTaskList(Task[] taskList, Task newTask) {
-        for (int arrayCounter = COUNTER_START; arrayCounter < taskList.length; arrayCounter++) {
-            if (taskList[arrayCounter] == null) {
-                taskList[arrayCounter] = newTask;
-                addCommandMessage(newTask, arrayCounter);
-                break;
-            }
-        }
+    private static void insertIntoTaskList(ArrayList<Task> taskList, Task newTask) {
+        taskList.add(newTask);
+        addCommandMessage(taskList, newTask);
     }
 
     private static boolean isEmpty(String information) {
@@ -244,7 +239,7 @@ public class Amadinho {
         System.out.println(BORDER_LINE);
     }
 
-    private static void markCommandMessage(int taskCount, Task taskList, boolean toMark) {
+    private static void markCommandMessage(int taskCount, Task taskToMark, boolean toMark) {
         System.out.println(BORDER_LINE);
 
         if (toMark) {
@@ -253,12 +248,22 @@ public class Amadinho {
             System.out.println(MESSAGE_UNMARK_COMPLETE);
         }
 
-        System.out.println(taskCount + "." + taskList);
+        System.out.println(taskCount + "." + taskToMark);
         System.out.println(BORDER_LINE);
     }
 
-    private static void addCommandMessage(Task newTask, int arrayCounter) {
-        int totalTasks = arrayCounter + ARRAY_INCREMENT;
+    private static void deleteCommandMessage(ArrayList<Task> taskList, int taskCount, Task taskToDelete) {
+        int totalTasks = taskList.size();
+
+        System.out.println(BORDER_LINE);
+        System.out.println(MESSAGE_DELETED_TASK);
+        System.out.println("  " + taskToDelete);
+        System.out.println(printTotalTasks(totalTasks));
+        System.out.println(BORDER_LINE);
+    }
+
+    private static void addCommandMessage(ArrayList<Task> taskList, Task newTask) {
+        int totalTasks = taskList.size();
 
         System.out.println(BORDER_LINE);
         System.out.println(MESSAGE_ADDED_TASK);
@@ -280,10 +285,6 @@ public class Amadinho {
         throw new InvalidCommand(message);
     }
 
-    public static void errorOutOfBounds(String message) throws IndexOutOfBoundsException {
-        throw new IndexOutOfBoundsException(message);
-    }
-
     public static void errorEmptyList(String message) throws EmptyList {
         throw new EmptyList(message);
     }
@@ -294,10 +295,16 @@ public class Amadinho {
         System.out.println(BORDER_LINE);
     }
 
-    private static void printNumberFormatExceptionMessage() {
+    private static void printNumberFormatExceptionMessage(String message) {
         System.out.println(BORDER_LINE);
         System.out.println(MESSAGE_ERROR_INVALID_COMMAND);
-        System.out.println(MESSAGE_ERROR_INVALID_COMMAND_MARK);
+
+        if (message.equals(COMMAND_MARK)) {
+            System.out.println(MESSAGE_ERROR_INVALID_COMMAND_MARK);
+        } else {
+            System.out.println(MESSAGE_ERROR_INVALID_COMMAND_DELETE);
+        }
+
         System.out.println(BORDER_LINE);
     }
 
