@@ -38,6 +38,10 @@ public class Constants {
     protected static final String MESSAGE_TOTALTASKS = "Number of tasks: ";
 
     protected static final String MESSAGE_LIST_EMPTY = "The list is empty. Lazy bum.";
+    protected static final String MESSAGE_ERROR_FILENOTFOUND = "File not found. Just give up.";
+    protected static final String MESSAGE_ERROR_IO = "Error creating file / directory. Just give up.";
+    protected static final String MESSAGE_ERROR_WRITEFAILED = "Error writing to file. Just give up.";
+    protected static final String MESSAGE_ERROR_READFAILED = "Error reading file. Just give up.";
     protected static final String MESSAGE_ERROR_INVALID_COMMAND = "Invalid command. Skill issue.";
     protected static final String MESSAGE_ERROR_INVALID_COMMAND_MARK = "mark / unmark <integer>";
     protected static final String MESSAGE_ERROR_INVALID_COMMAND_DELETE = "delete <integer>";
@@ -48,5 +52,8 @@ public class Constants {
     protected static final String MESSAGE_ERROR_INVALID_COMMAND_EVENT = MESSAGE_ERROR_INVALID_COMMAND
             + "\n" +  "event <description> /from <start> /to <end>";
 
+    protected static final String LISTFILE_PATHNAME = "./data/amadinho.txt";
+    protected static final String LISTFILE_DIVIDER = " | ";
+    protected static final String LISTFILE_NEWLINE = "\n";
     protected static final String BORDER_LINE = "____________________________________________________________";
 }

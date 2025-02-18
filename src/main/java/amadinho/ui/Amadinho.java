@@ -6,12 +6,17 @@ import amadinho.exceptions.*;
 
 import java.util.Scanner;
 import java.util.ArrayList;
+import java.io.FileWriter;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 
 public class Amadinho {
     public static void main(String[] args) {
         Scanner in = new Scanner(System.in);
         ArrayList<Task> taskList = new ArrayList<>();
 
+        readTextFile(taskList);
         welcomeMessage();
 
         while (true) {
@@ -127,6 +132,7 @@ public class Amadinho {
             taskToMark.markAsUndone();
         }
 
+        writeToTextFile(taskList);
         markCommandMessage(taskCount, taskToMark, toMark);
     }
 
@@ -143,7 +149,8 @@ public class Amadinho {
         Task taskToDelete = taskList.get(taskCount - ARRAY_INCREMENT);
         taskList.remove(taskCount - ARRAY_INCREMENT);
 
-        deleteCommandMessage(taskList, taskCount, taskToDelete);
+        writeToTextFile(taskList);
+        deleteCommandMessage(taskList, taskToDelete);
     }
 
     private static void commandTodo(ArrayList<Task> taskList, String information) {
@@ -153,7 +160,8 @@ public class Amadinho {
             }
 
             Todo newTodo = new Todo(information);
-            insertIntoTaskList(taskList, newTodo);
+            insertIntoTaskList(taskList, newTodo, true);
+            writeToTextFile(taskList);
         } catch (InvalidCommand e) {
             errorPrinting(e);
         }
@@ -171,7 +179,8 @@ public class Amadinho {
             String by = generateSubstring(information, descriptionPosition + LENGTH_BY);
 
             Deadline newDeadline = new Deadline(description, by);
-            insertIntoTaskList(taskList, newDeadline);
+            insertIntoTaskList(taskList, newDeadline, true);
+            writeToTextFile(taskList);
         } catch (InvalidCommand e) {
             errorPrinting(e);
         }
@@ -191,15 +200,19 @@ public class Amadinho {
             String to = generateSubstring(information, toPosition + LENGTH_TO);
 
             Event newEvent = new Event(description, from, to);
-            insertIntoTaskList(taskList, newEvent);
+            insertIntoTaskList(taskList, newEvent, true);
+            writeToTextFile(taskList);
         } catch (InvalidCommand e) {
             errorPrinting(e);
         }
     }
 
-    private static void insertIntoTaskList(ArrayList<Task> taskList, Task newTask) {
+    private static void insertIntoTaskList(ArrayList<Task> taskList, Task newTask, boolean isStart) {
         taskList.add(newTask);
-        addCommandMessage(taskList, newTask);
+
+        if (isStart) {
+            addCommandMessage(taskList, newTask);
+        }
     }
 
     private static boolean isEmpty(String information) {
@@ -220,6 +233,124 @@ public class Amadinho {
 
     private static String generateSubstring(String information, int start) {
         return information.substring(start).trim();
+    }
+
+
+    /*
+     * FILE-RELATED METHODS
+     */
+    
+    private static void readTextFile(ArrayList<Task> taskList) {
+        File listFile = new File(LISTFILE_PATHNAME);
+        fileExistCheck(listFile);
+
+        try {
+            Scanner fileInput = new Scanner(listFile);
+
+            while (fileInput.hasNext()) {
+                String userCommand = readCommand(fileInput);
+                String information = fileInput.nextLine();
+
+                switch (userCommand) {
+                case "T":
+                    readTodo(taskList, information);
+                    break;
+                case "D":
+                    readDeadline(taskList, information);
+                    break;
+                case "E":
+                    readEvent(taskList, information);
+                    break;
+                default:
+                    printFileExceptionsMessage(MESSAGE_ERROR_READFAILED);
+                }
+            }
+
+            fileInput.close();
+        } catch (FileNotFoundException e) {
+            printFileExceptionsMessage(MESSAGE_ERROR_FILENOTFOUND);
+        }
+    }
+
+    private static void fileExistCheck(File listFile) {
+        try {
+            File directory = listFile.getParentFile();
+
+            if (!directory.exists()) {
+                boolean isCreated = directory.mkdirs();
+
+                if (!isCreated) {
+                    throw new IOException();
+                }
+            }
+
+            if (!listFile.exists()) {
+                boolean isCreated = listFile.createNewFile();
+
+                if (!isCreated) {
+                    throw new IOException();
+                }
+            }
+        } catch (IOException e) {
+            printFileExceptionsMessage(MESSAGE_ERROR_IO);
+        }
+    }
+
+    private static void readTodo(ArrayList<Task> taskList, String information) {
+        String[] parts = information.split("\\|");
+
+        Todo newTodo = new Todo(parts[2].trim());
+        newTodo.setStatusIcon(parts[1].trim());
+        insertIntoTaskList(taskList, newTodo, false);
+    }
+
+    private static void readDeadline(ArrayList<Task> taskList, String information) {
+        String[] parts = information.split("\\|");
+
+        Deadline newDeadline = new Deadline(parts[2].trim(), parts[3].trim());
+        newDeadline.setStatusIcon(parts[1].trim());
+        insertIntoTaskList(taskList, newDeadline, false);
+    }
+
+    private static void readEvent(ArrayList<Task> taskList, String information) {
+        String[] parts = information.split("\\|");
+
+        Event newEvent = new Event(parts[2].trim(), parts[3].trim(), parts[4].trim());
+        newEvent.setStatusIcon(parts[1].trim());
+        insertIntoTaskList(taskList, newEvent, false);
+    }
+
+    private static void writeToTextFile(ArrayList<Task> taskList) {
+        try {
+            FileWriter fileWriter = new FileWriter(LISTFILE_PATHNAME);
+
+            for (Task task : taskList) {
+                char taskType = task.getTaskType();
+                String defaultString = taskType + LISTFILE_DIVIDER + task.getStatusIcon() +
+                        LISTFILE_DIVIDER + task.getDescription();
+
+                switch (taskType) {
+                case 'T':
+                    fileWriter.write(defaultString + LISTFILE_NEWLINE);
+                    break;
+                case 'D':
+                    fileWriter.write(defaultString + LISTFILE_DIVIDER + ((Deadline) task).getBy()
+                            + LISTFILE_NEWLINE);
+                    break;
+                case 'E':
+                    fileWriter.write(defaultString + LISTFILE_DIVIDER + ((Event) task).getFrom()
+                            + LISTFILE_DIVIDER + ((Event) task).getTo() + LISTFILE_NEWLINE);
+                    break;
+                default:
+                    printFileExceptionsMessage(MESSAGE_ERROR_WRITEFAILED);
+                    break;
+                }
+            }
+
+            fileWriter.close();
+        } catch (IOException e) {
+            printFileExceptionsMessage(MESSAGE_ERROR_WRITEFAILED);
+        }
     }
 
 
@@ -252,7 +383,7 @@ public class Amadinho {
         System.out.println(BORDER_LINE);
     }
 
-    private static void deleteCommandMessage(ArrayList<Task> taskList, int taskCount, Task taskToDelete) {
+    private static void deleteCommandMessage(ArrayList<Task> taskList, Task taskToDelete) {
         int totalTasks = taskList.size();
 
         System.out.println(BORDER_LINE);
@@ -308,4 +439,9 @@ public class Amadinho {
         System.out.println(BORDER_LINE);
     }
 
+    private static void printFileExceptionsMessage(String message) {
+        System.out.println(BORDER_LINE);
+        System.out.println(message);
+        System.out.println(BORDER_LINE);
+    }
 }
