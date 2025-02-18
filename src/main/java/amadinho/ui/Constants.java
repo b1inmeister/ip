@@ -38,6 +38,7 @@ public class Constants {
     protected static final String MESSAGE_TOTALTASKS = "Number of tasks: ";
 
     protected static final String MESSAGE_LIST_EMPTY = "The list is empty. Lazy bum.";
+    protected static final String MESSAGE_ERROR_OUTOFBOUNDS = "Number provided is not in the list. Lousy.";
     protected static final String MESSAGE_ERROR_FILENOTFOUND = "File not found. Just give up.";
     protected static final String MESSAGE_ERROR_IO = "Error creating file / directory. Just give up.";
     protected static final String MESSAGE_ERROR_WRITEFAILED = "Error writing to file. Just give up.";

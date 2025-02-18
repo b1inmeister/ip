@@ -124,16 +124,21 @@ public class Amadinho {
             return;
         }
 
-        Task taskToMark = taskList.get(taskCount - ARRAY_INCREMENT);
+        try {
+            Task taskToMark = taskList.get(taskCount - ARRAY_INCREMENT);
 
-        if(toMark) {
-            taskToMark.markAsDone();
-        } else {
-            taskToMark.markAsUndone();
+            if(toMark) {
+                taskToMark.markAsDone();
+            } else {
+                taskToMark.markAsUndone();
+            }
+
+            writeToTextFile(taskList);
+            markCommandMessage(taskCount, taskToMark, toMark);
+        } catch (IndexOutOfBoundsException e) {
+            printIndexOutOfBoundsException();
         }
 
-        writeToTextFile(taskList);
-        markCommandMessage(taskCount, taskToMark, toMark);
     }
 
     private static void commandDelete(ArrayList<Task> taskList, String information) {
@@ -146,11 +151,16 @@ public class Amadinho {
             return;
         }
 
-        Task taskToDelete = taskList.get(taskCount - ARRAY_INCREMENT);
-        taskList.remove(taskCount - ARRAY_INCREMENT);
+        try {
+            Task taskToDelete = taskList.get(taskCount - ARRAY_INCREMENT);
+            taskList.remove(taskCount - ARRAY_INCREMENT);
 
-        writeToTextFile(taskList);
-        deleteCommandMessage(taskList, taskToDelete);
+            writeToTextFile(taskList);
+            deleteCommandMessage(taskList, taskToDelete);
+        } catch (IndexOutOfBoundsException e) {
+            printIndexOutOfBoundsException();
+        }
+
     }
 
     private static void commandTodo(ArrayList<Task> taskList, String information) {
@@ -423,6 +433,12 @@ public class Amadinho {
     public static void errorPrinting(Exception e) {
         System.out.println(BORDER_LINE);
         System.out.println(e.getMessage());
+        System.out.println(BORDER_LINE);
+    }
+
+    private static void printIndexOutOfBoundsException() {
+        System.out.println(BORDER_LINE);
+        System.out.println(MESSAGE_ERROR_OUTOFBOUNDS);
         System.out.println(BORDER_LINE);
     }
 
