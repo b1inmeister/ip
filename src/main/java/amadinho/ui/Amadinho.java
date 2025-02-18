@@ -146,6 +146,7 @@ public class Amadinho {
                 arrayCounter++;
             } while (arrayCounter <= taskCount);
 
+            writeToTextFile(taskList);
             markCommandMessage(taskCount, taskList[arrayCounter], toMark);
         } catch (IndexOutOfBoundsException e) {
             errorPrinting(e);
@@ -160,7 +161,7 @@ public class Amadinho {
 
             Todo newTodo = new Todo(information);
             insertIntoTaskList(taskList, newTodo, true);
-            writeToTextFile(COMMAND_TODO, newTodo);
+            writeToTextFile(taskList);
         } catch (InvalidCommand e) {
             errorPrinting(e);
         }
@@ -179,7 +180,7 @@ public class Amadinho {
 
             Deadline newDeadline = new Deadline(description, by);
             insertIntoTaskList(taskList, newDeadline, true);
-            writeToTextFile(COMMAND_DEADLINE, newDeadline);
+            writeToTextFile(taskList);
         } catch (InvalidCommand e) {
             errorPrinting(e);
         }
@@ -200,7 +201,7 @@ public class Amadinho {
 
             Event newEvent = new Event(description, from, to);
             insertIntoTaskList(taskList, newEvent, true);
-            writeToTextFile(COMMAND_EVENT, newEvent);
+            writeToTextFile(taskList);
         } catch (InvalidCommand e) {
             errorPrinting(e);
         }
@@ -257,13 +258,13 @@ public class Amadinho {
                 String information = fileInput.nextLine();
 
                 switch (userCommand) {
-                case COMMAND_TODO:
+                case "T":
                     readTodo(taskList, information);
                     break;
-                case COMMAND_DEADLINE:
+                case "D":
                     readDeadline(taskList, information);
                     break;
-                case COMMAND_EVENT:
+                case "E":
                     readEvent(taskList, information);
                     break;
                 default:
@@ -272,9 +273,6 @@ public class Amadinho {
             }
 
             fileInput.close();
-
-            System.out.println(BORDER_LINE);
-            System.out.println("You have ongoing tasks. Procrastinator.");
         } catch (FileNotFoundException e) {
             printFileExceptionsMessage(MESSAGE_ERROR_FILENOTFOUND);
         }
@@ -328,35 +326,37 @@ public class Amadinho {
         insertIntoTaskList(taskList, newEvent, false);
     }
 
-    private static void writeToTextFile(String userCommand, Task newTask) {
+    private static void writeToTextFile(Task[] taskList) {
         try {
-            FileWriter fileWriter = new FileWriter(LISTFILE_PATHNAME, true);
+            FileWriter fileWriter = new FileWriter(LISTFILE_PATHNAME);
 
-            String defaultString = userCommand + LISTFILE_DIVIDER + newTask.getStatusNumbers() +
-                    LISTFILE_DIVIDER + newTask.getDescription();
+            for (int i = COUNTER_START; taskList[i] != null; i++) {
+                char taskType = taskList[i].getTaskType();
+                String defaultString = taskType + LISTFILE_DIVIDER + taskList[i].getStatusIcon() +
+                        LISTFILE_DIVIDER + taskList[i].getDescription();
 
-            switch (userCommand) {
-            case COMMAND_TODO:
-                fileWriter.write(defaultString + LISTFILE_NEWLINE);
-                break;
-            case COMMAND_DEADLINE:
-                fileWriter.write(defaultString + LISTFILE_DIVIDER + ((Deadline) newTask).getBy()
-                        + LISTFILE_NEWLINE);
-                break;
-            case COMMAND_EVENT:
-                fileWriter.write(defaultString + LISTFILE_DIVIDER + ((Event) newTask).getFrom()
-                        + LISTFILE_DIVIDER + ((Event) newTask).getTo() + LISTFILE_NEWLINE);
-                break;
-            default:
-                printFileExceptionsMessage(MESSAGE_ERROR_WRITEFAILED);
-                break;
+                switch (taskType) {
+                case 'T':
+                    fileWriter.write(defaultString + LISTFILE_NEWLINE);
+                    break;
+                case 'D':
+                    fileWriter.write(defaultString + LISTFILE_DIVIDER + ((Deadline) taskList[i]).getBy()
+                            + LISTFILE_NEWLINE);
+                    break;
+                case 'E':
+                    fileWriter.write(defaultString + LISTFILE_DIVIDER + ((Event) taskList[i]).getFrom()
+                            + LISTFILE_DIVIDER + ((Event) taskList[i]).getTo() + LISTFILE_NEWLINE);
+                    break;
+                default:
+                    printFileExceptionsMessage(MESSAGE_ERROR_WRITEFAILED);
+                    break;
+                }
             }
 
             fileWriter.close();
         } catch (IOException e) {
             printFileExceptionsMessage(MESSAGE_ERROR_WRITEFAILED);
         }
-
     }
 
 

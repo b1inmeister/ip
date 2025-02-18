@@ -1,30 +1,34 @@
 package amadinho.tasktypes;
 
+
+
 public class Task {
     protected String description;
     protected boolean isDone;
+
+    private static final int TASKTYPE_POSITION = 1;
 
     public Task(String description) {
         this.description = description;
         this.isDone = false;
     }
 
-    public String getStatusIcon() {
-        return (isDone ? "X" : " ");
-    }
-
-    public String getStatusNumbers() {
-        return (isDone ? "1" : "0");
-    }
-
     public String getDescription() {
         return description;
     }
 
+    public String getStatusIcon() {
+        return (isDone ? "X" : "_");
+    }
+
+    public char getTaskType() {
+        return toString().charAt(TASKTYPE_POSITION);
+    }
+
     public void setStatusIcon(String statusIcon) {
-        if (statusIcon.equals("1")) {
+        if (statusIcon.equals("X")) {
             markAsDone();
-        } else if (statusIcon.equals("0")) {
+        } else if (statusIcon.equals("_")) {
             markAsUndone();
         }
     }
