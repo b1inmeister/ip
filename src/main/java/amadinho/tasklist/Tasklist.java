@@ -1,5 +1,6 @@
 package amadinho.tasklist;
 
+import amadinho.exceptions.EmptyList;
 import amadinho.main.Constants;
 import amadinho.ui.Ui;
 import amadinho.parser.Parser;
@@ -10,14 +11,33 @@ import java.util.ArrayList;
 
 public class Tasklist {
 
+    public static final String MESSAGE_FIND_INTRO = "Tasks found:";
+    public static final String MESSAGE_FIND_FAILED = "No tasks found. Skill issue.";
+
     /*
-     * taskList Manipulation Methods
+     * Primary taskList Manipulation Methods
      */
 
-    public static void printList(ArrayList<Task> taskList) {
+    public static void executeList(ArrayList<Task> list, boolean isFind) {
+        try {
+            if (list.isEmpty()) {
+                isErrorListOrFind(isFind);
+            } else {
+                System.out.println(Constants.BORDER_LINE);
+                isIntroListOrFind(isFind);
+                Tasklist.printList(list);
+                System.out.println(Constants.BORDER_LINE);
+            }
+        } catch (EmptyList e) {
+            Parser.errorPrinting(e);
+        }
+
+    }
+
+    public static void printList(ArrayList<Task> list) {
         int taskCounter = Constants.LIST_COUNTER_START;
 
-        for (Task task : taskList) {
+        for (Task task : list) {
             System.out.println(taskCounter + Constants.LIST_DOT + task);
             taskCounter++;
         }
@@ -56,5 +76,35 @@ public class Tasklist {
         if (isStart) {
             Ui.addCommandMessage(taskList, newTask);
         }
+    }
+
+
+    /*
+     * Secondary Methods
+     */
+
+    private static void isErrorListOrFind(boolean isFind) throws EmptyList {
+        if (isFind) {
+            errorEmptyList(MESSAGE_FIND_FAILED);
+        } else {
+            errorEmptyList(Constants.MESSAGE_LIST_EMPTY);
+        }
+    }
+
+    private static void isIntroListOrFind(boolean isFind) {
+        if (isFind) {
+            System.out.println(MESSAGE_FIND_INTRO);
+        } else {
+            System.out.println(Constants.MESSAGE_LIST_INTRO);
+        }
+    }
+
+
+    /*
+     * Exception Handling Method for EmptyList
+     */
+
+    public static void errorEmptyList(String message) throws EmptyList {
+        throw new EmptyList(message);
     }
 }

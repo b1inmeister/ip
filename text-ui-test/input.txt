@@ -4,7 +4,7 @@ todo yes
 deadline
 deadline this /by now
 event
-event that /from then /to now
+event yes bro /from then /to now
 mark a
 mark 4
 mark 3
@@ -13,6 +13,9 @@ unmark a
 unmark 4
 unmark 1
 list
+find
+find no
+find yes
 delete
 delete 4
 delete 2
