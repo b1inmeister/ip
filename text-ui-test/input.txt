@@ -1,0 +1,20 @@
+list
+todo
+todo yes
+deadline
+deadline this /by now
+event
+event that /from then /to now
+mark a
+mark 4
+mark 3
+mark 1
+unmark a
+unmark 4
+unmark 1
+list
+delete
+delete 4
+delete 2
+list
+bye
