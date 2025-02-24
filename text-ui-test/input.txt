@@ -1,10 +1,12 @@
 list
 todo
-todo yes
+todo tod
 deadline
-deadline this /by now
+deadline dead1 /by now
+deadline dead2 /by 2025-02-24 1548
 event
-event that /from then /to now
+event even1 /from then /to now
+event even2 /from 2025-03-03 1854 /to 2025-11-06 1423
 mark a
 mark 4
 mark 3

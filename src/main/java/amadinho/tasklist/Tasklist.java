@@ -1,6 +1,7 @@
 package amadinho.tasklist;
 
 import amadinho.main.Constants;
+import amadinho.parser.ParserConstants;
 import amadinho.ui.Ui;
 import amadinho.parser.Parser;
 import amadinho.storage.Storage;
@@ -29,7 +30,7 @@ public class Tasklist {
         try {
             taskCount = Integer.parseInt(information);
         } catch (NumberFormatException e) {
-            Parser.printNumberFormatExceptionMessage(Constants.COMMAND_MARK);
+            Parser.printNumberFormatExceptionMessage(ParserConstants.COMMAND_MARK);
             return;
         }
 
@@ -45,7 +46,7 @@ public class Tasklist {
             Storage.writeToTextFile(taskList);
             Ui.markCommandMessage(taskCount, taskToMark, toMark);
         } catch (IndexOutOfBoundsException e) {
-            Parser.printIndexOutOfBoundsException();
+            Parser.printIndexOutOfBoundsExceptionMessage();
         }
 
     }

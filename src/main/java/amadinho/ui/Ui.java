@@ -1,5 +1,7 @@
 package amadinho.ui;
 
+import static amadinho.ui.UiConstants.*;
+
 import amadinho.main.Constants;
 import amadinho.tasktypes.Task;
 
@@ -27,7 +29,7 @@ public class Ui {
     }
 
     public static boolean isCompleted(String userCommand) {
-        return userCommand.equals(Constants.COMMAND_BYE);
+        return userCommand.equals(COMMAND_BYE);
     }
 
 
@@ -37,13 +39,13 @@ public class Ui {
 
     public static void welcomeMessage() {
         System.out.println(Constants.BORDER_LINE);
-        System.out.println(Constants.MESSAGE_WELCOME);
+        System.out.println(MESSAGE_WELCOME);
         System.out.println(Constants.BORDER_LINE);
     }
 
     public static void exitMessage() {
         System.out.println(Constants.BORDER_LINE);
-        System.out.println(Constants.MESSAGE_EXIT);
+        System.out.println(MESSAGE_EXIT);
         System.out.println(Constants.BORDER_LINE);
     }
 
@@ -51,9 +53,9 @@ public class Ui {
         System.out.println(Constants.BORDER_LINE);
 
         if (toMark) {
-            System.out.println(Constants.MESSAGE_MARK_COMPLETE);
+            System.out.println(MESSAGE_MARK_COMPLETE);
         } else {
-            System.out.println(Constants.MESSAGE_UNMARK_COMPLETE);
+            System.out.println(MESSAGE_UNMARK_COMPLETE);
         }
 
         System.out.println(taskCount + Constants.LIST_DOT + taskToMark);
@@ -61,26 +63,24 @@ public class Ui {
     }
 
     public static void deleteCommandMessage(ArrayList<Task> taskList, Task taskToDelete) {
-        int totalTasks = taskList.size();
-
         System.out.println(Constants.BORDER_LINE);
-        System.out.println(Constants.MESSAGE_DELETED_TASK);
+        System.out.println(MESSAGE_DELETED_TASK);
         System.out.println(Constants.LIST_SPACE + taskToDelete);
-        System.out.println(printTotalTasks(totalTasks));
+        System.out.println(printTotalTasks(taskList));
         System.out.println(Constants.BORDER_LINE);
     }
 
     public static void addCommandMessage(ArrayList<Task> taskList, Task newTask) {
-        int totalTasks = taskList.size();
-
         System.out.println(Constants.BORDER_LINE);
-        System.out.println(Constants.MESSAGE_ADDED_TASK);
+        System.out.println(MESSAGE_ADDED_TASK);
         System.out.println(Constants.LIST_SPACE + newTask);
-        System.out.println(printTotalTasks(totalTasks));
+        System.out.println(printTotalTasks(taskList));
         System.out.println(Constants.BORDER_LINE);
     }
 
-    public static String printTotalTasks(int totalTasks) {
-        return Constants.MESSAGE_TOTALTASKS + totalTasks;
+    public static String printTotalTasks(ArrayList<Task> taskList) {
+        int totalTasks = taskList.size();
+
+        return MESSAGE_TOTALTASKS + totalTasks;
     }
 }
