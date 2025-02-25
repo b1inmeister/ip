@@ -5,6 +5,7 @@ package amadinho.tasktypes;
  * the user wants to add to their list of Tasks.
  */
 public class Task {
+
     protected String description;
     protected boolean isDone;
 

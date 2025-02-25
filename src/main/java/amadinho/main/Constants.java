@@ -1,8 +1,7 @@
 package amadinho.main;
 
 /**
- * Contains constants that are commonly
- * used within all classes of Amadinho.
+ * Contains constants that are commonly used within all classes of Amadinho.
  */
 public class Constants {
 

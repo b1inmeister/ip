@@ -9,6 +9,7 @@ public class UiConstants {
             To add new Tasks                    todo / deadline / event
             To mark Tasks as complete or not    mark / unmark
             To list all Tasks                   list
+            To search for Tasks                 find
             To delete Tasks                     delete
             To give up and exit                 bye""";
     protected static final String MESSAGE_EXIT = "Congrats! You have given up.";

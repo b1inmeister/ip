@@ -7,7 +7,7 @@ import amadinho.ui.Ui;
 import amadinho.tasklist.Tasklist;
 import amadinho.storage.Storage;
 
-import amadinho.exceptions.EmptyList;
+import amadinho.exceptions.EmptyString;
 import amadinho.exceptions.InvalidCommand;
 import amadinho.tasktypes.Deadline;
 import amadinho.tasktypes.Event;
@@ -41,6 +41,9 @@ public class Parser {
             switch (userCommand) {
             case COMMAND_LIST:
                 commandList(taskList);
+                break;
+            case COMMAND_FIND:
+                commandFind(taskList, information);
                 break;
             case COMMAND_MARK:
                 commandMark(taskList, information);
@@ -79,16 +82,32 @@ public class Parser {
      * @param taskList List of Tasks to be printed.
      */
     private static void commandList(ArrayList<Task> taskList) {
+        Tasklist.executeList(taskList, false);
+
+    }
+
+    /**
+     * Executes the "find" command that searches for Tasks in the list that contains the search criteria.
+     *
+     * @param taskList List of Tasks to search.
+     * @param information String containing the search criteria.
+     */
+    private static void commandFind(ArrayList<Task> taskList, String information) {
+        ArrayList<Task> foundTasks = new ArrayList<>();
+
         try {
-            if (taskList.isEmpty()) {
-                errorEmptyList(MESSAGE_LIST_EMPTY);
-            } else {
-                System.out.println(Constants.BORDER_LINE);
-                System.out.println(MESSAGE_LIST_INTRO);
-                Tasklist.printList(taskList);
-                System.out.println(Constants.BORDER_LINE);
+            if (information.isEmpty()) {
+                errorEmptyString();
             }
-        } catch (EmptyList e) {
+
+            for (Task task : taskList) {
+                if (isContains(information, task)) {
+                    Tasklist.insertIntoTaskList(foundTasks, task, true);
+                }
+            }
+
+            Tasklist.executeList(foundTasks, true);
+        } catch (EmptyString e) {
             errorPrinting(e);
         }
     }
@@ -231,6 +250,18 @@ public class Parser {
     /*
      * Secondary Command Methods
      */
+
+    /**
+     * Checks if the information String can be found within the description of a Task.
+     *
+     * @param information String to check within the reference description.
+     * @param task Task containing the description that acts as the reference.
+     * @return Boolean value that indicates if the information
+     *         String is present in the description of the Task.
+     */
+    private static boolean isContains(String information, Task task) {
+        return task.getDescription().contains(information);
+    }
 
     /**
      * Checks if the inputted String is empty.
@@ -392,18 +423,16 @@ public class Parser {
 
 
     /*
-     * Error Printing Methods
+     * Exception Handling Methods
      */
 
     /**
-     * Prints the corresponding error message of the exception caught.
+     * Throws EmptyString
      *
-     * @param e Exception caught.
+     * @throws EmptyString If the String provided is empty.
      */
-    private static void errorPrinting(Exception e) {
-        System.out.println(Constants.BORDER_LINE);
-        System.out.println(e.getMessage());
-        System.out.println(Constants.BORDER_LINE);
+    private static void errorEmptyString() throws EmptyString {
+        throw new EmptyString(MESSAGE_ERROR_INVALID_COMMAND_FIND);
     }
 
     /**
@@ -414,16 +443,6 @@ public class Parser {
      */
     private static void errorInvalidCommand(String message) throws InvalidCommand {
         throw new InvalidCommand(message);
-    }
-
-    /**
-     * Throws EmptyList.
-     *
-     * @param message Error message to be paired with the EmptyList thrown.
-     * @throws EmptyList If the list of Tasks is empty.
-     */
-    public static void errorEmptyList(String message) throws EmptyList {
-        throw new EmptyList(message);
     }
 
     /**
@@ -462,6 +481,17 @@ public class Parser {
     private static void printDateTimeParseExceptionMessage(String message) {
         System.out.println(Constants.BORDER_LINE);
         System.out.println(message);
+        System.out.println(Constants.BORDER_LINE);
+    }
+
+    /**
+     * Prints the corresponding error message of the exception caught.
+     *
+     * @param e Exception caught.
+     */
+    public static void errorPrinting(Exception e) {
+        System.out.println(Constants.BORDER_LINE);
+        System.out.println(e.getMessage());
         System.out.println(Constants.BORDER_LINE);
     }
 }

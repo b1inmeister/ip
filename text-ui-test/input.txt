@@ -15,6 +15,9 @@ unmark a
 unmark 4
 unmark 1
 list
+find
+find no
+find 2
 delete
 delete 4
 delete 2

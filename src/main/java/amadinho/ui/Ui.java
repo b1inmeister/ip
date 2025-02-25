@@ -32,10 +32,10 @@ public class Ui {
      *
      * @param in Command input from the user.
      * @param isStart Boolean value to determine the purpose of using this method.
-     *                isStart = true --> Method is used to transfer data from a provided text file to
+     *                isStart == true --> Method is used to transfer data from a provided text file to
      *                                   the program. In this case, the command input comes from
      *                                   the provided text file.
-     *                isStart = false --> Method is used to read the command input from the user.
+     *                isStart == false --> Method is used to read the command input from the user.
      * @return Remaining words in the command input.
      */
     public static String readInfo(Scanner in, boolean isStart) {
@@ -86,8 +86,8 @@ public class Ui {
      * @param taskCount Position of the Task that was marked or unmarked within the list.
      * @param taskToMark Data of the Task that was marked or unmarked.
      * @param toMark Boolean value to determine if marking or unmarking has occurred.
-     *               toMark = true --> Task was marked.
-     *               toMark = false --> Task was unmarked.
+     *               toMark == true --> Task was marked.
+     *               toMark == false --> Task was unmarked.
      */
     public static void markCommandMessage(int taskCount, Task taskToMark, boolean toMark) {
         System.out.println(Constants.BORDER_LINE);

@@ -1,5 +1,8 @@
 package amadinho.tasklist;
 
+import static amadinho.tasklist.TasklistConstants.*;
+
+import amadinho.exceptions.EmptyList;
 import amadinho.main.Constants;
 import amadinho.parser.ParserConstants;
 import amadinho.ui.Ui;
@@ -14,15 +17,44 @@ import java.util.ArrayList;
  */
 public class Tasklist {
 
-    /**
-     * Prints all the Tasks in the list of Tasks.
-     *
-     * @param taskList List of Tasks.
+
+    /*
+     * Primary taskList Manipulation Methods
      */
-    public static void printList(ArrayList<Task> taskList) {
+
+    /**
+     * Checks if list is empty, and formats the output for printing.
+     *
+     * @param list List of Tasks to print out.
+     * @param isFind Boolean value to indicate what this method is used for
+     *               isFind == true --> Method is used during execution of "find" command
+     *               isFind == false --> Method is used during execution of "list" command
+     */
+    public static void executeList(ArrayList<Task> list, boolean isFind) {
+        try {
+            if (list.isEmpty()) {
+                isErrorListOrFind(isFind);
+            } else {
+                System.out.println(Constants.BORDER_LINE);
+                isIntroListOrFind(isFind);
+                Tasklist.printList(list);
+                System.out.println(Constants.BORDER_LINE);
+            }
+        } catch (EmptyList e) {
+            Parser.errorPrinting(e);
+        }
+
+    }
+
+    /**
+     * Prints each Task in the list of Tasks.
+     *
+     * @param list List of Tasks to print out.
+     */
+    public static void printList(ArrayList<Task> list) {
         int taskCounter = Constants.LIST_COUNTER_START;
 
-        for (Task task : taskList) {
+        for (Task task : list) {
             System.out.println(taskCounter + Constants.LIST_DOT + task);
             taskCounter++;
         }
@@ -37,8 +69,8 @@ public class Tasklist {
      * @param taskList List of Tasks.
      * @param information Index of Task to be marked or unmarked.
      * @param toMark Boolean value to determine whether to mark or unmark the Task chosen.
-     *               toMark = true --> Task is to be marked.
-     *               toMark = false --> Task is to be unmarked.
+     *               toMark == true --> Task is to be marked.
+     *               toMark == false --> Task is to be unmarked.
      */
     public static void executeMark(ArrayList<Task> taskList, String information, boolean toMark) {
         int taskCount;
@@ -73,9 +105,9 @@ public class Tasklist {
      * @param taskList List of Tasks.
      * @param newTask Task to be added to the list of Tasks.
      * @param isStart Boolean value to determine the purpose of using this method.
-     *                isStart = true --> Method is used to transfer data from a provided text file to
+     *                isStart == true --> Method is used to transfer data from a provided text file to
      *                                   the program.
-     *                isStart = false --> Method is used to insert a Task that is provided from user input.
+     *                isStart == false --> Method is used to insert a Task that is provided from user input.
      */
     public static void insertIntoTaskList(ArrayList<Task> taskList, Task newTask, boolean isStart) {
         taskList.add(newTask);
@@ -83,5 +115,56 @@ public class Tasklist {
         if (!isStart) {
             Ui.addCommandMessage(taskList, newTask);
         }
+    }
+
+
+    /*
+     * Secondary Methods
+     */
+
+    /**
+     * Throws EmptyList with an error message that is dependent on the command input.
+     *
+     * @param isFind Boolean value to indicate what this method is used for
+     *               isFind == true --> "find" command was the input.
+     *               isFind == false --> "list" command was the input.
+     * @throws EmptyList If the list provided is empty.
+     */
+    private static void isErrorListOrFind(boolean isFind) throws EmptyList {
+        if (isFind) {
+            errorEmptyList(MESSAGE_FIND_FAILED);
+        } else {
+            errorEmptyList(MESSAGE_LIST_EMPTY);
+        }
+    }
+
+    /**
+     * Prints the intro message for list printing, depending on the command input.
+     *
+     * @param isFind Boolean value to indicate the command input.
+     *               isFind == true --> "find" command was the input.
+     *               isFind == false --> "list" command was the input.
+     */
+    private static void isIntroListOrFind(boolean isFind) {
+        if (isFind) {
+            System.out.println(MESSAGE_FIND_INTRO);
+        } else {
+            System.out.println(MESSAGE_LIST_INTRO);
+        }
+    }
+
+
+    /*
+     * Exception Handling Method for EmptyList
+     */
+
+    /**
+     * Throws EmptyList.
+     *
+     * @param message Error message to be paired with the EmptyList thrown.
+     * @throws EmptyList If the list of Tasks is empty.
+     */
+    public static void errorEmptyList(String message) throws EmptyList {
+        throw new EmptyList(message);
     }
 }

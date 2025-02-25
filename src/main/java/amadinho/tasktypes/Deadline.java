@@ -5,6 +5,7 @@ package amadinho.tasktypes;
  * have a provided deadline.
  */
 public class Deadline extends Task {
+
     protected String by;
 
     /**
