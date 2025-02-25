@@ -1,24 +1,30 @@
 package amadinho.parser;
 
+import static amadinho.parser.ParserConstants.*;
+
 import amadinho.main.Constants;
 import amadinho.ui.Ui;
 import amadinho.tasklist.Tasklist;
 import amadinho.storage.Storage;
 
 import amadinho.exceptions.EmptyString;
+import amadinho.exceptions.EmptyList;
 import amadinho.exceptions.InvalidCommand;
 import amadinho.tasktypes.Deadline;
 import amadinho.tasktypes.Event;
 import amadinho.tasktypes.Task;
 import amadinho.tasktypes.Todo;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 
 public class Parser {
 
     public static final String COMMAND_FIND = "find";
     public static final String MESSAGE_ERROR_INVALID_COMMAND_FIND =
-            Constants.MESSAGE_ERROR_INVALID_COMMAND + "\n" + "find <description>";
+            MESSAGE_ERROR_INVALID_COMMAND + "\n" + "find <description>";
 
     /*
      * Main Command Execution Method
@@ -27,32 +33,32 @@ public class Parser {
     public static void executeCommand(ArrayList<Task> taskList, String userCommand, String information) {
         try {
             switch (userCommand) {
-            case Constants.COMMAND_LIST:
+            case COMMAND_LIST:
                 commandList(taskList);
                 break;
             case COMMAND_FIND:
                 commandFind(taskList, information);
                 break;
-            case Constants.COMMAND_MARK:
+            case COMMAND_MARK:
                 commandMark(taskList, information);
                 break;
-            case Constants.COMMAND_UNMARK:
+            case COMMAND_UNMARK:
                 commandUnmark(taskList, information);
                 break;
-            case Constants.COMMAND_DELETE:
+            case COMMAND_DELETE:
                 commandDelete(taskList, information);
                 break;
-            case Constants.COMMAND_TODO:
+            case COMMAND_TODO:
                 commandTodo(taskList, information);
                 break;
-            case Constants.COMMAND_DEADLINE:
+            case COMMAND_DEADLINE:
                 commandDeadline(taskList, information);
                 break;
-            case Constants.COMMAND_EVENT:
+            case COMMAND_EVENT:
                 commandEvent(taskList, information);
                 break;
             default:
-                errorInvalidCommand(Constants.MESSAGE_ERROR_INVALID_COMMAND);
+                errorInvalidCommand(MESSAGE_ERROR_INVALID_COMMAND);
             }
         } catch (InvalidCommand e) {
             errorPrinting(e);
@@ -103,7 +109,7 @@ public class Parser {
         try {
             taskCount = Integer.parseInt(information);
         } catch (NumberFormatException e) {
-            printNumberFormatExceptionMessage(Constants.COMMAND_DELETE);
+            printNumberFormatExceptionMessage(COMMAND_DELETE);
             return;
         }
 
@@ -114,7 +120,7 @@ public class Parser {
             Storage.writeToTextFile(taskList);
             Ui.deleteCommandMessage(taskList, taskToDelete);
         } catch (IndexOutOfBoundsException e) {
-            printIndexOutOfBoundsException();
+            printIndexOutOfBoundsExceptionMessage();
         }
 
     }
@@ -122,7 +128,7 @@ public class Parser {
     private static void commandTodo(ArrayList<Task> taskList, String information) {
         try {
             if (isEmpty(information)) {
-                errorInvalidCommand(Constants.MESSAGE_ERROR_INVALID_COMMAND_TODO);
+                errorInvalidCommand(MESSAGE_ERROR_INVALID_COMMAND_TODO);
             }
 
             Todo newTodo = new Todo(information);
@@ -135,16 +141,22 @@ public class Parser {
 
     private static void commandDeadline(ArrayList<Task> taskList, String information) {
         try {
-            if (isMissing(information, Constants.IDENTIFIER_BY)) {
-                errorInvalidCommand(Constants.MESSAGE_ERROR_INVALID_COMMAND_DEADLINE);
+            if (isMissing(information, IDENTIFIER_BY)) {
+                errorInvalidCommand(MESSAGE_ERROR_INVALID_COMMAND_DEADLINE);
             }
 
-            int descriptionPosition = findIndex(information, Constants.IDENTIFIER_BY);
+            int descriptionPosition = findIndex(information, IDENTIFIER_BY);
 
-            String description = generateSubstring(information, Constants.START_OF_STRING, descriptionPosition);
-            String by = generateSubstring(information, descriptionPosition + Constants.LENGTH_BY);
+            String description = generateSubstring(information, START_OF_STRING, descriptionPosition);
+            String by = generateSubstring(information, descriptionPosition + LENGTH_BY);
 
-            Deadline newDeadline = new Deadline(description, by);
+            Deadline newDeadline = extractDateDeadline(by, description);
+
+            // check for incorrect input format (since newDeadline = null when format is wrong)
+            if (newDeadline == null) {
+                return;
+            }
+
             Tasklist.insertIntoTaskList(taskList, newDeadline, true);
             Storage.writeToTextFile(taskList);
         } catch (InvalidCommand e) {
@@ -154,18 +166,24 @@ public class Parser {
 
     private static void commandEvent(ArrayList<Task> taskList, String information) {
         try {
-            if (isMissing(information, Constants.IDENTIFIER_FROM) || isMissing(information, Constants.IDENTIFIER_TO)) {
-                errorInvalidCommand(Constants.MESSAGE_ERROR_INVALID_COMMAND_EVENT);
+            if (isMissing(information, IDENTIFIER_FROM) || isMissing(information, IDENTIFIER_TO)) {
+                errorInvalidCommand(MESSAGE_ERROR_INVALID_COMMAND_EVENT);
             }
 
-            int descriptionPosition = findIndex(information, Constants.IDENTIFIER_FROM);
-            int toPosition = findIndex(information, Constants.IDENTIFIER_TO);
+            int descriptionPosition = findIndex(information, IDENTIFIER_FROM);
+            int toPosition = findIndex(information, IDENTIFIER_TO);
 
-            String description = generateSubstring(information, Constants.START_OF_STRING, descriptionPosition);
-            String from = generateSubstring(information, descriptionPosition + Constants.LENGTH_FROM, toPosition);
-            String to = generateSubstring(information, toPosition + Constants.LENGTH_TO);
+            String description = generateSubstring(information, START_OF_STRING, descriptionPosition);
+            String from = generateSubstring(information, descriptionPosition + LENGTH_FROM, toPosition);
+            String to = generateSubstring(information, toPosition + LENGTH_TO);
 
-            Event newEvent = new Event(description, from, to);
+            Event newEvent = extractDateEvent(from, to, description);
+
+            // check for incorrect input format (since newEvent = null when format is wrong)
+            if (newEvent == null) {
+                return;
+            }
+
             Tasklist.insertIntoTaskList(taskList, newEvent, true);
             Storage.writeToTextFile(taskList);
         } catch (InvalidCommand e) {
@@ -204,6 +222,69 @@ public class Parser {
 
 
     /*
+     * Date and Time Extraction Methods
+     */
+
+    private static Deadline extractDateDeadline(String by, String description) {
+        Deadline newDeadline;
+
+        DateTimeFormatter dateTimeInputFormat = getDateTimeInputFormat();
+        DateTimeFormatter dateTimeOutputFormat = getDateTimeOutputFormat();
+
+        try {
+            LocalDateTime dateTime = parseDateTime(by, dateTimeInputFormat);
+
+            String formattedDateTime = getFormattedDateTime(dateTime, dateTimeOutputFormat);
+
+            newDeadline = new Deadline(description, formattedDateTime);
+        } catch (DateTimeParseException e) {
+            printDateTimeParseExceptionMessage(MESSAGE_ERROR_INVALID_COMMAND_DEADLINE);
+            return null;
+        }
+
+        return newDeadline;
+    }
+
+    private static Event extractDateEvent(String from, String to, String description) {
+        Event newEvent;
+
+        DateTimeFormatter dateTimeInputFormat = getDateTimeInputFormat();
+        DateTimeFormatter dateTimeOutputFormat = getDateTimeOutputFormat();
+
+        try {
+            LocalDateTime dateTimeFrom = parseDateTime(from, dateTimeInputFormat);
+            LocalDateTime dateTimeTo = parseDateTime(to, dateTimeInputFormat);
+
+            String formattedDateTimeFrom = getFormattedDateTime(dateTimeFrom, dateTimeOutputFormat);
+            String formattedDateTimeTo = getFormattedDateTime(dateTimeTo, dateTimeOutputFormat);
+
+            newEvent = new Event(description, formattedDateTimeFrom, formattedDateTimeTo);
+        } catch (DateTimeParseException e) {
+            printDateTimeParseExceptionMessage(MESSAGE_ERROR_INVALID_COMMAND_EVENT);
+            return null;
+        }
+
+        return newEvent;
+    }
+
+    private static DateTimeFormatter getDateTimeInputFormat() {
+        return DateTimeFormatter.ofPattern(DATETIME_INPUT_FORMAT);
+    }
+
+    private static DateTimeFormatter getDateTimeOutputFormat() {
+        return DateTimeFormatter.ofPattern(DATETIME_OUTPUT_FORMAT);
+    }
+
+    private static LocalDateTime parseDateTime(String by, DateTimeFormatter dateTimeInputFormat) {
+        return LocalDateTime.parse(by, dateTimeInputFormat);
+    }
+
+    private static String getFormattedDateTime(LocalDateTime dateTime, DateTimeFormatter dateTimeOutputFormat) {
+        return dateTime.format(dateTimeOutputFormat);
+    }
+
+
+    /*
      * Exception Handling Methods
      */
 
@@ -215,22 +296,32 @@ public class Parser {
         throw new InvalidCommand(message);
     }
 
-    public static void printIndexOutOfBoundsException() {
+    public static void errorEmptyList(String message) throws EmptyList {
+        throw new EmptyList(message);
+    }
+
+    public static void printIndexOutOfBoundsExceptionMessage() {
         System.out.println(Constants.BORDER_LINE);
-        System.out.println(Constants.MESSAGE_ERROR_OUTOFBOUNDS);
+        System.out.println(MESSAGE_ERROR_OUTOFBOUNDS);
         System.out.println(Constants.BORDER_LINE);
     }
 
     public static void printNumberFormatExceptionMessage(String message) {
         System.out.println(Constants.BORDER_LINE);
-        System.out.println(Constants.MESSAGE_ERROR_INVALID_COMMAND);
+        System.out.println(MESSAGE_ERROR_INVALID_COMMAND);
 
-        if (message.equals(Constants.COMMAND_MARK)) {
-            System.out.println(Constants.MESSAGE_ERROR_INVALID_COMMAND_MARK);
+        if (message.equals(COMMAND_MARK)) {
+            System.out.println(MESSAGE_ERROR_INVALID_COMMAND_MARK);
         } else {
-            System.out.println(Constants.MESSAGE_ERROR_INVALID_COMMAND_DELETE);
+            System.out.println(MESSAGE_ERROR_INVALID_COMMAND_DELETE);
         }
 
+        System.out.println(Constants.BORDER_LINE);
+    }
+
+    private static void printDateTimeParseExceptionMessage(String message) {
+        System.out.println(Constants.BORDER_LINE);
+        System.out.println(message);
         System.out.println(Constants.BORDER_LINE);
     }
 

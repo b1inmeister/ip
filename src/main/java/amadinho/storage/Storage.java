@@ -1,5 +1,7 @@
 package amadinho.storage;
 
+import static amadinho.storage.StorageConstants.*;
+
 import amadinho.main.Constants;
 import amadinho.ui.Ui;
 import amadinho.tasklist.Tasklist;
@@ -22,7 +24,7 @@ public class Storage {
      */
 
     public static void readTextFile(ArrayList<Task> taskList) {
-        File listFile = new File(Constants.LISTFILE_PATHNAME);
+        File listFile = new File(LISTFILE_PATHNAME);
         fileExistCheck(listFile);
 
         readList(taskList, listFile);
@@ -41,19 +43,19 @@ public class Storage {
 
             fileInput.close();
         } catch (FileNotFoundException e) {
-            printFileExceptionsMessage(Constants.MESSAGE_ERROR_FILENOTFOUND);
+            printFileExceptionsMessage(MESSAGE_ERROR_FILENOTFOUND);
         }
     }
 
     public static void writeToTextFile(ArrayList<Task> taskList) {
         try {
-            FileWriter fileWriter = new FileWriter(Constants.LISTFILE_PATHNAME);
+            FileWriter fileWriter = new FileWriter(LISTFILE_PATHNAME);
 
             writeList(taskList, fileWriter);
 
             fileWriter.close();
         } catch (IOException e) {
-            printFileExceptionsMessage(Constants.MESSAGE_ERROR_WRITEFAILED);
+            printFileExceptionsMessage(MESSAGE_ERROR_WRITEFAILED);
         }
     }
 
@@ -63,18 +65,18 @@ public class Storage {
             String defaultString = makeDefaultString(task, taskType);
 
             switch (taskType) {
-            case Constants.CHAR_TODO:
-                fileWriter.write(defaultString + Constants.LISTFILE_NEWLINE);
+            case CHAR_TODO:
+                fileWriter.write(defaultString + LISTFILE_NEWLINE);
                 break;
-            case Constants.CHAR_DEADLINE:
-                fileWriter.write(defaultString + Constants.LISTFILE_DIVIDER + getBy((Deadline) task) + Constants.LISTFILE_NEWLINE);
+            case CHAR_DEADLINE:
+                fileWriter.write(defaultString + LISTFILE_DIVIDER + getBy((Deadline) task) + LISTFILE_NEWLINE);
                 break;
-            case Constants.CHAR_EVENT:
-                fileWriter.write(defaultString + Constants.LISTFILE_DIVIDER + getFrom((Event) task)
-                        + Constants.LISTFILE_DIVIDER + getTo((Event) task) + Constants.LISTFILE_NEWLINE);
+            case CHAR_EVENT:
+                fileWriter.write(defaultString + LISTFILE_DIVIDER + getFrom((Event) task)
+                        + LISTFILE_DIVIDER + getTo((Event) task) + LISTFILE_NEWLINE);
                 break;
             default:
-                printFileExceptionsMessage(Constants.MESSAGE_ERROR_WRITEFAILED);
+                printFileExceptionsMessage(MESSAGE_ERROR_WRITEFAILED);
                 break;
             }
         }
@@ -92,7 +94,7 @@ public class Storage {
             directoryCheck(directory);
             fileCheck(listFile);
         } catch (IOException e) {
-            printFileExceptionsMessage(Constants.MESSAGE_ERROR_IO);
+            printFileExceptionsMessage(MESSAGE_ERROR_IO);
         }
     }
 
@@ -119,17 +121,17 @@ public class Storage {
     private static void executeCommandFromListFile(ArrayList<Task> taskList,
                                                   String listFileCommand, String listFileInfo) {
         switch (listFileCommand) {
-        case Constants.STRING_SPACE:
+        case STRING_SPACE:
             readTodo(taskList, listFileInfo);
             break;
-        case Constants.STRING_DEADLINE:
+        case STRING_DEADLINE:
             readDeadline(taskList, listFileInfo);
             break;
-        case Constants.STRING_EVENT:
+        case STRING_EVENT:
             readEvent(taskList, listFileInfo);
             break;
         default:
-            printFileExceptionsMessage(Constants.MESSAGE_ERROR_READFAILED);
+            printFileExceptionsMessage(MESSAGE_ERROR_READFAILED);
         }
     }
 
@@ -158,27 +160,27 @@ public class Storage {
     }
 
     private static String[] splitInfo(String listFileInfo) {
-        return listFileInfo.split(Constants.SPLIT_PARAMETER);
+        return listFileInfo.split(SPLIT_PARAMETER);
     }
 
     private static String getDescription(String[] infoParts) {
-        return infoParts[Constants.LISTFILE_DESCRIPTION].trim();
+        return infoParts[LISTFILE_DESCRIPTION].trim();
     }
 
     private static String getStatusIcon(String[] infoParts) {
-        return infoParts[Constants.LISTFILE_STATUSICON].trim();
+        return infoParts[LISTFILE_STATUSICON].trim();
     }
 
     private static String getBy(String[] infoParts) {
-        return infoParts[Constants.LISTFILE_BY].trim();
+        return infoParts[LISTFILE_BY].trim();
     }
 
     private static String getFrom(String[] infoParts) {
-        return infoParts[Constants.LISTFILE_FROM].trim();
+        return infoParts[LISTFILE_FROM].trim();
     }
 
     private static String getTo(String[] infoParts) {
-        return infoParts[Constants.LISTFILE_TO].trim();
+        return infoParts[LISTFILE_TO].trim();
     }
 
     private static char getTaskType(Task task) {
@@ -191,8 +193,8 @@ public class Storage {
      */
 
     private static String makeDefaultString(Task task, char taskType) {
-        return taskType + Constants.LISTFILE_DIVIDER + task.getStatusIcon() +
-                Constants.LISTFILE_DIVIDER + task.getDescription();
+        return taskType + LISTFILE_DIVIDER + task.getStatusIcon() +
+                LISTFILE_DIVIDER + task.getDescription();
     }
 
     private static String getBy(Deadline task) {
