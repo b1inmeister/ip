@@ -1,8 +1,7 @@
 package amadinho.tasktypes;
 
 /**
- * Subclass of Task for Tasks that do
- * not have a provided deadline.
+ * Subclass of Task for Tasks that do not have any time-related information.
  */
 public class Todo extends Task {
 
@@ -16,10 +15,9 @@ public class Todo extends Task {
     }
 
     /**
-     * Converts a Todo to a String type for printing purposes.
-     * Builds upon the similarly named method in the Task superclass.
+     * Converts a Todo to a String for printing purposes.
      *
-     * @return String version of the Todo chosen.
+     * @return String equivalent of the Todo.
      */
     @Override
     public String toString() {

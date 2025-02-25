@@ -3,16 +3,14 @@ package amadinho.parser;
 import static amadinho.parser.ParserConstants.*;
 
 import amadinho.main.Constants;
-import amadinho.ui.Ui;
 import amadinho.tasklist.Tasklist;
 import amadinho.storage.Storage;
-
-import amadinho.exceptions.EmptyString;
-import amadinho.exceptions.InvalidCommand;
-import amadinho.tasktypes.Deadline;
-import amadinho.tasktypes.Event;
 import amadinho.tasktypes.Task;
 import amadinho.tasktypes.Todo;
+import amadinho.tasktypes.Deadline;
+import amadinho.tasktypes.Event;
+import amadinho.exceptions.EmptyString;
+import amadinho.exceptions.InvalidCommand;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -25,12 +23,12 @@ import java.util.ArrayList;
 public class Parser {
 
     /*
-     * Main Command Execution Method
+     * MAIN COMMAND EXECUTION METHOD
      */
 
     /**
-     * Deciphers which command input to execute, based on the user input.
-     * If the user input does not match any of the existing commands, InvalidCommand is thrown.
+     * Deciphers which command input to execute, based on the user input. If the user input does not match
+     * any of the existing commands, InvalidCommand is thrown.
      *
      * @param taskList List of Tasks.
      * @param userCommand Command input from the user.
@@ -73,11 +71,11 @@ public class Parser {
 
 
     /*
-     * Primary Command Methods
+     * PRIMARY COMMAND METHODS
      */
 
     /**
-     * Executes the "list" command that prints the list of Tasks.
+     * Executes the "list" command which prints the list of Tasks.
      *
      * @param taskList List of Tasks to be printed.
      */
@@ -87,10 +85,10 @@ public class Parser {
     }
 
     /**
-     * Executes the "find" command that searches for Tasks in the list that contains the search criteria.
+     * Executes the "find" command which searches for Tasks in the list that contains the search criteria.
      *
-     * @param taskList List of Tasks to search.
-     * @param information String containing the search criteria.
+     * @param taskList List of Tasks to be searched.
+     * @param information Search criteria for the searching process.
      */
     private static void commandFind(ArrayList<Task> taskList, String information) {
         ArrayList<Task> foundTasks = new ArrayList<>();
@@ -113,58 +111,40 @@ public class Parser {
     }
 
     /**
-     * Executes the "mark" command that marks a Task in the list of Tasks as completed.
+     * Executes the "mark" command which marks a Task in the list of Tasks as complete.
      *
      * @param taskList List of Tasks.
-     * @param information Index of Task to be marked within the list of Tasks.
+     * @param information Index of the Task to be marked (within the list).
      */
     private static void commandMark(ArrayList<Task> taskList, String information) {
         Tasklist.executeMark(taskList, information, true);
     }
 
     /**
-     *  Executes the "unmark" command that marks a Task in the list of Tasks as incomplete.
+     * Executes the "unmark" command which unmarks a Task that was marked as complete in the list of Tasks.
      *
      * @param taskList List of Tasks.
-     * @param information Index of Task to be unmarked within the list of Tasks.
+     * @param information Index of the Task to be unmarked (within the list).
      */
     private static void commandUnmark(ArrayList<Task> taskList, String information) {
         Tasklist.executeMark(taskList, information, false);
     }
 
     /**
-     * Executes the "delete" command that removes a Task from the list of Tasks.
+     * Executes the "delete" command which removes a Task from the list of Tasks.
      *
-     * @param taskList List of Tasks.
-     * @param information Index of Task to be removed within the list of Tasks.
+     * @param taskList List of Tasks that the Task is removed from.
+     * @param information Index of the Task to be removed within the list of Tasks.
      */
     private static void commandDelete(ArrayList<Task> taskList, String information) {
-        int taskCount;
-
-        try {
-            taskCount = Integer.parseInt(information);
-        } catch (NumberFormatException e) {
-            printNumberFormatExceptionMessage(COMMAND_DELETE);
-            return;
-        }
-
-        try {
-            Task taskToDelete = taskList.get(taskCount - Constants.ARRAY_INCREMENT);
-            taskList.remove(taskCount - Constants.ARRAY_INCREMENT);
-
-            Storage.writeToTextFile(taskList);
-            Ui.deleteCommandMessage(taskList, taskToDelete);
-        } catch (IndexOutOfBoundsException e) {
-            printIndexOutOfBoundsExceptionMessage();
-        }
-
+        Tasklist.executeDelete(taskList, information);
     }
 
     /**
-     * Executes the "todo" command that adds a Todo to the end of the list of Tasks.
+     * Executes the "todo" command which adds a Todo to the end of the list of Tasks.
      *
-     * @param taskList List of Tasks that the Todo will be added to .
-     * @param information Information of the Todo to be inserted, which is the description.
+     * @param taskList List of Tasks that the Todo will be added to.
+     * @param information Information of the Todo to be inserted, which includes the description.
      */
     private static void commandTodo(ArrayList<Task> taskList, String information) {
         try {
@@ -173,6 +153,7 @@ public class Parser {
             }
 
             Todo newTodo = new Todo(information);
+
             Tasklist.insertIntoTaskList(taskList, newTodo, false);
             Storage.writeToTextFile(taskList);
         } catch (InvalidCommand e) {
@@ -181,11 +162,11 @@ public class Parser {
     }
 
     /**
-     * Executes the "deadline" command that adds a Deadline to the end of the list of Tasks.
+     * Executes the "deadline" command which adds a Deadline to the end of the list of Tasks.
      *
      * @param taskList List of Tasks that the Deadline will be added to.
      * @param information Information of the Deadline to be inserted, which includes
-     *                    the description and the deadline timing.
+     *                    the description and deadline timing.
      */
     private static void commandDeadline(ArrayList<Task> taskList, String information) {
         try {
@@ -213,7 +194,7 @@ public class Parser {
     }
 
     /**
-     * Executes the "event" command that adds an Event to the end of the list of Tasks.
+     * Executes the "event" command which adds an Event to the end of the list of Tasks.
      *
      * @param taskList List of Tasks that the Event will be added to.
      * @param information Information of the Event to be inserted, which includes
@@ -248,16 +229,15 @@ public class Parser {
 
 
     /*
-     * Secondary Command Methods
+     * SECONDARY COMMAND METHODS
      */
 
     /**
-     * Checks if the information String can be found within the description of a Task.
+     * Checks if a String can be found within the description of a Task.
      *
      * @param information String to check within the reference description.
      * @param task Task containing the description that acts as the reference.
-     * @return Boolean value that indicates if the information
-     *         String is present in the description of the Task.
+     * @return Boolean value that indicates if the information String is present.
      */
     private static boolean isContains(String information, Task task) {
         return task.getDescription().contains(information);
@@ -274,18 +254,18 @@ public class Parser {
     }
 
     /**
-     * Checks if an identifier String is present within another inputted String.
+     * Checks if an identifier String is absent from another inputted String.
      *
      * @param information String that acts as the reference.
      * @param identifier String to check within the reference String.
-     * @return Boolean value that indicates if the identifier is present.
+     * @return Boolean value that indicates if the identifier is absent.
      */
     private static boolean isMissing(String information, String identifier) {
         return !(information.contains(identifier));
     }
 
     /**
-     * Returns index of the identifier String within another inputted String.
+     * Returns the index of an identifier String within another inputted String.
      *
      * @param information String that acts as the reference.
      * @param identifier String to check within the reference String.
@@ -296,24 +276,24 @@ public class Parser {
     }
 
     /**
-     * Creates a substring from an inputted String within the range provided.
+     * Creates a substring from an inputted String within the specified range.
      *
      * @param information String that acts as the reference.
-     * @param start Index of the start of the substring within the reference String.
-     * @param end Index of the end of the substring within the reference String.
-     * @return Substring of the reference String within the range provided.
+     * @param start Index of the start of the substring (within the reference String).
+     * @param end Index of the end of the substring (within the reference String).
+     * @return Substring of the reference String within the specified range.
      */
     private static String generateSubstring(String information, int start, int end) {
         return information.substring(start, end).trim();
     }
 
     /**
-     * Creates a substring from an inputted String within the range provided.
+     * Creates a substring from an inputted String within the specified range.
      * In this method, the end index will be the end of the inputted string.
      *
      * @param information String that acts as the reference.
-     * @param start Index of the start of the substring within the reference String.
-     * @return Substring of the reference String within the range provided.
+     * @param start Index of the start of the substring (within the reference String).
+     * @return Substring of the reference String within the specified range.
      */
     private static String generateSubstring(String information, int start) {
         return information.substring(start).trim();
@@ -321,15 +301,15 @@ public class Parser {
 
 
     /*
-     * Date and Time Extraction Methods
+     * DATE AND TIME EXTRACTION METHODS
      */
 
     /**
-     * Extracts the date / time from the by String, and creates a Deadline.
+     * Extracts the date and time from the by String, and creates a Deadline.
      *
      * @param by Unformatted deadline timing of the Deadline to be created.
      * @param description Description of the Deadline to be created.
-     * @return Deadline with the formatted date / time.
+     * @return Deadline with the formatted date and time.
      */
     private static Deadline extractDateDeadline(String by, String description) {
         Deadline newDeadline;
@@ -352,12 +332,12 @@ public class Parser {
     }
 
     /**
-     * Extracts the date / time from the from and to String, and creates an Event.
+     * Extracts the date and time from the from and to String, and creates an Event.
      *
      * @param from Unformatted start timing of the Event to be created.
      * @param to Unformatted end timing of the Event to be created.
      * @param description Description of the Event to be created.
-     * @return Event with the formatted date / time.
+     * @return Event with the formatted date and time.
      */
     private static Event extractDateEvent(String from, String to, String description) {
         Event newEvent;
@@ -382,18 +362,18 @@ public class Parser {
     }
 
     /**
-     * Gets the format for the date / time input.
+     * Gets the format for the date and time input.
      *
-     * @return Correct format for the date / time input.
+     * @return Format for the date and time input.
      */
     private static DateTimeFormatter getDateTimeInputFormat() {
         return DateTimeFormatter.ofPattern(DATETIME_INPUT_FORMAT);
     }
 
     /**
-     * Gets the format for the date / time output.
+     * Gets the format for the date and time output.
      *
-     * @return Correct format for the date / time output.
+     * @return Format for the date and time output.
      */
     private static DateTimeFormatter getDateTimeOutputFormat() {
         return DateTimeFormatter.ofPattern(DATETIME_OUTPUT_FORMAT);
@@ -404,18 +384,18 @@ public class Parser {
      *
      * @param info String to be parsed.
      * @param dateTimeInputFormat Format of the LocalDateTime instance.
-     * @return LocalDateTime instance containing the date and time from the String.
+     * @return LocalDateTime containing the date and time from the String.
      */
     private static LocalDateTime parseDateTime(String info, DateTimeFormatter dateTimeInputFormat) {
         return LocalDateTime.parse(info, dateTimeInputFormat);
     }
 
     /**
-     * Formats the LocalDateTime instance with the correct format for output.
+     * Converts the LocalDateTime instance into a String with the correct format for output.
      *
-     * @param dateTime LocalDateTime instance to be re-formatted.
-     * @param dateTimeOutputFormat Correct format for re-formatting.
-     * @return Re-formatted LocalDateTime instance.
+     * @param dateTime LocalDateTime to be converted and re-formatted.
+     * @param dateTimeOutputFormat Format for re-formatting.
+     * @return String containing the re-formatted date and time.
      */
     private static String getFormattedDateTime(LocalDateTime dateTime, DateTimeFormatter dateTimeOutputFormat) {
         return dateTime.format(dateTimeOutputFormat);
@@ -423,7 +403,7 @@ public class Parser {
 
 
     /*
-     * Exception Handling Methods
+     * EXCEPTION HANDLING METHODS
      */
 
     /**
@@ -446,34 +426,7 @@ public class Parser {
     }
 
     /**
-     * Prints an error message when an index exceeds the size of the list of Tasks.
-     */
-    public static void printIndexOutOfBoundsExceptionMessage() {
-        System.out.println(Constants.BORDER_LINE);
-        System.out.println(MESSAGE_ERROR_OUTOFBOUNDS);
-        System.out.println(Constants.BORDER_LINE);
-    }
-
-    /**
-     * Prints an error message when parsing into a number cannot be performed.
-     *
-     * @param message Command input of the method where the NumberFormatException was thrown.
-     */
-    public static void printNumberFormatExceptionMessage(String message) {
-        System.out.println(Constants.BORDER_LINE);
-        System.out.println(MESSAGE_ERROR_INVALID_COMMAND);
-
-        if (message.equals(COMMAND_MARK)) {
-            System.out.println(MESSAGE_ERROR_INVALID_COMMAND_MARK);
-        } else {
-            System.out.println(MESSAGE_ERROR_INVALID_COMMAND_DELETE);
-        }
-
-        System.out.println(Constants.BORDER_LINE);
-    }
-
-    /**
-     * Prints an error message when parsing into the specified date / time format
+     * Prints an error message when parsing a String into a LocalDateTime with the specified date / time format
      * cannot be performed.
      *
      * @param message Command input of the method where the DateTimeParseException was thrown.
@@ -485,7 +438,7 @@ public class Parser {
     }
 
     /**
-     * Prints the corresponding error message of the exception caught.
+     * Prints the corresponding error message of an exception caught.
      *
      * @param e Exception caught.
      */

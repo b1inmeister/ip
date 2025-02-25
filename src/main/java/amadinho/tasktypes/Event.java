@@ -1,8 +1,7 @@
 package amadinho.tasktypes;
 
 /**
- * Subclass of Task for Tasks that have
- * a provided start and end time.
+ * Subclass of Task for Tasks that have a start and end timing.
  */
 public class Event extends Task {
 
@@ -13,8 +12,8 @@ public class Event extends Task {
      * Constructor for an Event to be instantiated.
      *
      * @param description Description of the Event to be instantiated.
-     * @param from Start date / time of this Event.
-     * @param to End date / time of this Event.
+     * @param from Start date and time of the Event.
+     * @param to End date and time of the Event.
      */
     public Event(String description, String from, String to) {
         super(description);
@@ -25,7 +24,7 @@ public class Event extends Task {
     /**
      * Getter function for the start date and time of an Event.
      *
-     * @return Start date / time of the Event chosen.
+     * @return Start date and time of the Event.
      */
     public String getFrom() {
         return from;
@@ -34,17 +33,16 @@ public class Event extends Task {
     /**
      * Getter function for the end date and time of an Event.
      *
-     * @return End date / time of the Event chosen.
+     * @return End date and time of the Event.
      */
     public String getTo() {
         return to;
     }
 
     /**
-     * Converts an Event to a String type for printing purposes.
-     * Builds upon the similarly named method in the Task superclass.
+     * Converts an Event to a String for printing purposes.
      *
-     * @return String version of the Event chosen.
+     * @return String equivalent of the Event.
      */
     @Override
     public String toString() {

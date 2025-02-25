@@ -5,7 +5,6 @@ package amadinho.storage;
  */
 public class StorageConstants {
     protected static final String LISTFILE_PATHNAME = "./data/amadinho.txt";
-
     protected static final String LISTFILE_DIVIDER = " | ";
     protected static final String LISTFILE_NEWLINE = "\n";
     protected static final String SPLIT_PARAMETER = "\\|";
@@ -19,7 +18,7 @@ public class StorageConstants {
     protected static final char CHAR_TODO = 'T';
     protected static final char CHAR_DEADLINE = 'D';
     protected static final char CHAR_EVENT = 'E';
-    protected static final String STRING_SPACE = "T";
+    protected static final String STRING_TODO = "T";
     protected static final String STRING_DEADLINE = "D";
     protected static final String STRING_EVENT = "E";
 

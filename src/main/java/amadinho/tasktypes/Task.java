@@ -1,8 +1,7 @@
 package amadinho.tasktypes;
 
 /**
- * Custom data type that contains data of each Task that
- * the user wants to add to their list of Tasks.
+ * Custom data type that contains information of each Task that the user wants to add to their list of Tasks.
  */
 public class Task {
 
@@ -14,7 +13,7 @@ public class Task {
     /**
      * Constructor for a Task to be instantiated.
      *
-     * @param description Description of the task to be instantiated.
+     * @param description Description of the Task to be instantiated.
      */
     public Task(String description) {
         this.description = description;
@@ -22,40 +21,37 @@ public class Task {
     }
 
     /**
-     * Getter function for the description within a Task.
+     * Getter function for the description of a Task.
      *
-     * @return Description of the Task chosen.
+     * @return Description of the chosen Task.
      */
     public String getDescription() {
         return description;
     }
 
     /**
-     * Getter function for the completion status of a Task.
-     * X means complete, while _ means incomplete.
+     * Getter function for the completion status icon of a Task. X means complete, while _ means incomplete.
      *
-     * @return Completion status of the Task chosen.
+     * @return Completion status icon of the chosen Task.
      */
     public String getStatusIcon() {
         return (isDone ? "X" : "_");
     }
 
     /**
-     *  Getter function of the type of a Task.
-     *  T means todo, D means deadline, and E means event.
+     *  Getter function of the type of a Task. T means todo, D means deadline, and E means event.
      *
-     * @return Type of the Task chosen.
+     * @return Type of the chosen Task in a char form.
      */
     public char getTaskType() {
         return toString().charAt(TASKTYPE_POSITION);
     }
 
     /**
-     * Setter function of the completion status of a Task.
-     * This method is called when transferring data of an existing list of Tasks
-     * from a provided text file to the program.
+     * Setter function of the completion status of a Task. This method is only called when adding
+     * the list of Tasks in the text file to the program.
      *
-     * @param statusIcon Completion status of the Task to be added.
+     * @param statusIcon Completion status icon of the Task to be added.
      */
     public void setStatusIcon(String statusIcon) {
         if (statusIcon.equals("X")) {
@@ -66,23 +62,23 @@ public class Task {
     }
 
     /**
-     * Marks the chosen Task as completed.
+     * Marks a Task as complete.
      */
     public void markAsDone() {
         isDone = true;
     }
 
     /**
-     * Marks the chosen Task as incomplete.
+     * Marks a Task as incomplete.
      */
     public void markAsUndone() {
         isDone = false;
     }
 
     /**
-     * Converts a Task to a String type for printing purposes.
+     * Converts a Task to a String for printing purposes.
      *
-     * @return String version of the Task chosen.
+     * @return String equivalent of the Task .
      */
     @Override
     public String toString() {

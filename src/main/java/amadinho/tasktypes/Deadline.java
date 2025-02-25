@@ -1,8 +1,7 @@
 package amadinho.tasktypes;
 
 /**
- * Subclass of Task for Tasks that
- * have a provided deadline.
+ * Subclass of Task for Tasks that have a deadline timing.
  */
 public class Deadline extends Task {
 
@@ -12,7 +11,7 @@ public class Deadline extends Task {
      * Constructor for a Deadline to be instantiated.
      *
      * @param description Description of the Deadline to be instantiated.
-     * @param by Date / time that this Deadline must be completed by.
+     * @param by Date and time that the Deadline must be completed by.
      */
     public Deadline(String description, String by) {
         super(description);
@@ -22,17 +21,16 @@ public class Deadline extends Task {
     /**
      * Getter function for the date and time that a Deadline must be completed by.
      *
-     * @return Date / time that the Deadline chosen must be completed by.
+     * @return Date and time that the Deadline must be completed by.
      */
     public String getBy() {
         return by;
     }
 
     /**
-     * Converts a Deadline to a String type for printing purposes.
-     * Builds upon the similarly named method in the Task superclass.
+     * Converts a Deadline to a String for printing purposes.
      *
-     * @return String version of the Deadline chosen.
+     * @return String equivalent of the Deadline.
      */
     @Override
     public String toString() {

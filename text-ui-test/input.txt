@@ -1,12 +1,12 @@
 list
 todo
-todo tod
+todo go for training
 deadline
 deadline dead1 /by now
-deadline dead2 /by 2025-02-24 1548
+deadline score a hat trick /by 2025-05-25 1700
 event
 event even1 /from then /to now
-event even2 /from 2025-03-03 1854 /to 2025-11-06 1423
+event manchester derby /from 2025-04-05 1400 /to 2025-04-05 1600
 mark a
 mark 4
 mark 3
@@ -17,7 +17,7 @@ unmark 1
 list
 find
 find no
-find 2
+find hat trick
 delete
 delete 4
 delete 2

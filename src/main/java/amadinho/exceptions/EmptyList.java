@@ -1,8 +1,7 @@
 package amadinho.exceptions;
 
 /**
- * Exception for the scenario
- * when the list of Tasks is empty.
+ * Exception for the scenario when the list of Tasks is empty.
  */
 public class EmptyList extends Exception {
 
@@ -11,7 +10,7 @@ public class EmptyList extends Exception {
      *
      * @param message Error message to be printed when EmptyList is thrown.
      */
-    public EmptyList(String message){
+    public EmptyList(String message) {
         super(message);
     }
 }

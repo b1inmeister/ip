@@ -18,20 +18,19 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 /**
- * Contains methods that pertain to the reading and writing of the list of Tasks
- * to an external provided text file.
+ * Contains methods that pertain to the reading and writing of the list of Tasks to an external text file.
  */
 public class Storage {
 
     /*
-     * Key Methods
+     * PRIMARY METHODS
      */
 
     /**
-     * Instantiates the provided text file with data into the
+     * Instantiates a text file with an existing list of Tasks into the
      * program, and calls for an existence check.
      *
-     * @param taskList List of Tasks that the data will be inserted to.
+     * @param taskList New list of Tasks that the existing list will be inserted to.
      */
     public static void readTextFile(ArrayList<Task> taskList) {
         File listFile = new File(LISTFILE_PATHNAME);
@@ -41,11 +40,11 @@ public class Storage {
     }
 
     /**
-     * Reads data from the provided text file.
+     * Reads an existing list of Tasks from the text file.
      * If text file cannot be found, FileNotFoundException is thrown.
      *
-     * @param taskList List of Tasks that the data will be inserted to.
-     * @param listFile Instance of the provided text file.
+     * @param taskList New list of Tasks that the existing list will be inserted to.
+     * @param listFile Instance of the text file containing the existing list of Tasks.
      */
     private static void readList(ArrayList<Task> taskList, File listFile) {
         try {
@@ -65,10 +64,10 @@ public class Storage {
     }
 
     /**
-     * Instantiates the provided text file for writing
+     * Instantiates a text file to write a list of Tasks to.
      * If there are issues with the instantiation process, IOException is thrown.
      *
-     * @param taskList Existing list of Tasks.
+     * @param taskList List of Tasks to write from.
      */
     public static void writeToTextFile(ArrayList<Task> taskList) {
         try {
@@ -83,11 +82,11 @@ public class Storage {
     }
 
     /**
-     * Writes data from the list of Tasks onto the provided text file.
+     * Writes a list of Tasks onto a text file.
      *
-     * @param taskList Existing list of Tasks.
-     * @param fileWriter Instance of the provided text file for writing purposes.
-     * @throws IOException If there are issues when writing to the provided text file.
+     * @param taskList List of Tasks to write from.
+     * @param fileWriter Instance of the text file to write to.
+     * @throws IOException If there are issues writing to the text file.
      */
     private static void writeList(ArrayList<Task> taskList, FileWriter fileWriter) throws IOException {
         for (Task task : taskList) {
@@ -114,13 +113,13 @@ public class Storage {
 
 
     /*
-     * Secondary Methods (for readTextFile)
+     * SECONDARY METHODS (for readTextFile)
      */
 
     /**
-     * Checks if the provided text file exists.
+     * Checks if a text file exists.
      *
-     * @param listFile Instance of the provided text file.
+     * @param listFile Instance of the text file.
      */
     private static void fileExistCheck(File listFile) {
         try {
@@ -134,10 +133,9 @@ public class Storage {
     }
 
     /**
-     * Checks if the parent directory of the provided text file exists.
-     * Creates the parent directory if it does not exist.
+     * Checks if the parent directory of a text file exists, and creates a parent directory if it does not exist.
      *
-     * @param directory Instance of the parent directory of the provided text file.
+     * @param directory Instance of the parent directory of the text file.
      * @throws IOException If there are issues with the creation of the directory.
      */
     private static void directoryCheck(File directory) throws IOException {
@@ -148,11 +146,10 @@ public class Storage {
     }
 
     /**
-     * Checks if the provided text file exists within the parent directory.
-     * Creates the text file if it does not exist.
+     * Checks if a text file exists within a parent directory, and creates a text file if it does not exist.
      *
-     * @param listFile Instance of the provided text file.
-     * @throws IOException If there are issues with the creation of the provided text file.
+     * @param listFile Instance of the text file.
+     * @throws IOException If there are issues with the creation of the text file.
      */
     private static void fileCheck(File listFile) throws IOException {
         if (!listFile.exists()) {
@@ -162,10 +159,10 @@ public class Storage {
     }
 
     /**
-     * Checks if the creation of either the parent directory or the provided text file is successful.
+     * Checks if the creation of either a parent directory or a text file is successful.
      *
      * @param isCreated Boolean value resulting from the attempt to create the parent directory
-     *                  or the provided text file.
+     *                  or the text file.
      * @throws IOException If the creation is unsuccessful.
      */
     private static void createdCheck(boolean isCreated) throws IOException {
@@ -175,16 +172,16 @@ public class Storage {
     }
 
     /**
-     * Executes the input from the command part of data from the provided text file.
+     * Executes the reading of a Task from the existing list of Tasks in a text file, based on its type.
      *
-     * @param taskList List of Tasks that the data will be inserted into.
-     * @param listFileCommand Input from the command part of data from the provided text file.
-     * @param listFileInfo Input from the information part of data from the provided text file.
+     * @param taskList New list of Tasks that the existing list of Tasks will be inserted into.
+     * @param listFileTaskType Type of the specified Task in the existing list.
+     * @param listFileInfo Information of the specified Task in the existing list.
      */
     private static void executeCommandFromListFile(ArrayList<Task> taskList,
-                                                  String listFileCommand, String listFileInfo) {
-        switch (listFileCommand) {
-        case STRING_SPACE:
+                                                  String listFileTaskType, String listFileInfo) {
+        switch (listFileTaskType) {
+        case STRING_TODO:
             readTodo(taskList, listFileInfo);
             break;
         case STRING_DEADLINE:
@@ -199,9 +196,9 @@ public class Storage {
     }
 
     /**
-     * Adds a Todo from the provided text file to the list of Tasks.
+     * Adds a Todo from the existing list of Tasks in a text file to a new list of Tasks in the program.
      *
-     * @param taskList List of Tasks that the Todo will be inserted into.
+     * @param taskList New list of Tasks that the Todo will be inserted into.
      * @param listFileInfo Information of the Todo such as description and completion status.
      */
     private static void readTodo(ArrayList<Task> taskList, String listFileInfo) {
@@ -209,13 +206,14 @@ public class Storage {
 
         Todo newTodo = new Todo(getDescription(infoParts));
         newTodo.setStatusIcon(getStatusIcon(infoParts));
+
         Tasklist.insertIntoTaskList(taskList, newTodo, true);
     }
 
     /**
-     * Adds a Deadline from the provided text file to the list of Tasks.
+     * Adds a Deadline from the existing list of Tasks in a text file to a new list of Tasks in the program.
      *
-     * @param taskList List of Tasks that the Deadline will be inserted into.
+     * @param taskList New list of Tasks that the Deadline will be inserted into.
      * @param listFileInfo Information of the Deadline such as description, completion
      *                     status and deadline timing.
      */
@@ -224,13 +222,14 @@ public class Storage {
 
         Deadline newDeadline = new Deadline(getDescription(infoParts), getBy(infoParts));
         newDeadline.setStatusIcon(getStatusIcon(infoParts));
+
         Tasklist.insertIntoTaskList(taskList, newDeadline, true);
     }
 
     /**
-     * Adds an Event from the provided text file to the list of Tasks.
+     * Adds an Event from the existing list of Tasks in a text file to a new list of Tasks in the program.
      *
-     * @param taskList List of Tasks that the Event will be inserted into.
+     * @param taskList New list of Tasks that the Event will be inserted into.
      * @param listFileInfo Information of the Event such as description, completion
      *                     status as well as start and end timings.
      */
@@ -239,13 +238,13 @@ public class Storage {
 
         Event newEvent = new Event(getDescription(infoParts), getFrom(infoParts), getTo(infoParts));
         newEvent.setStatusIcon(getStatusIcon(infoParts));
+
         Tasklist.insertIntoTaskList(taskList, newEvent, true);
     }
 
     /**
-     * Splits the information into its individual components.
-     * These include description, as well as deadline, start and end timings,
-     * depending on the type of Task.
+     * Splits the information of a Task into its individual components. These include description, as well as
+     * deadline, start and end timings, depending on the type of Task.
      *
      * @param listFileInfo Information of the Task.
      * @return Array of Strings where each index contains an individual
@@ -258,8 +257,8 @@ public class Storage {
     /**
      * Gets the description of a Task from the array of individual information components.
      *
-     * @param infoParts Array of the individual components of the information of the Task chosen.
-     * @return Description of the Task chosen.
+     * @param infoParts Array of the individual components of the information of the Task.
+     * @return Description of the Task.
      */
     private static String getDescription(String[] infoParts) {
         return infoParts[LISTFILE_DESCRIPTION].trim();
@@ -268,8 +267,8 @@ public class Storage {
     /**
      * Gets the completion status of a Task from the array of individual information components.
      *
-     * @param infoParts Array of the individual components of the information of the Task chosen.
-     * @return Completion status of the Task chosen.
+     * @param infoParts Array of the individual components of the information of the Task.
+     * @return Completion status of the Task.
      */
     private static String getStatusIcon(String[] infoParts) {
         return infoParts[LISTFILE_STATUSICON].trim();
@@ -278,8 +277,8 @@ public class Storage {
     /**
      * Gets the deadline timing of a Deadline from the array of individual information components.
      *
-     * @param infoParts Array of the individual components of the information of the Deadline chosen.
-     * @return Deadline timing of the Deadline chosen.
+     * @param infoParts Array of the individual components of the information of the Deadline.
+     * @return Deadline timing of the Deadline.
      */
     private static String getBy(String[] infoParts) {
         return infoParts[LISTFILE_BY].trim();
@@ -288,8 +287,8 @@ public class Storage {
     /**
      * Gets the start timing of an Event from the array of individual information components.
      *
-     * @param infoParts Array of the individual components of the information of the Event chosen.
-     * @return Start timing of the Event chosen.
+     * @param infoParts Array of the individual components of the information of the Event.
+     * @return Start timing of the Event.
      */
     private static String getFrom(String[] infoParts) {
         return infoParts[LISTFILE_FROM].trim();
@@ -298,18 +297,18 @@ public class Storage {
     /**
      * Gets the end timing of an Event from the array of individual information components.
      *
-     * @param infoParts Array of the individual components of the information of the Event chosen.
-     * @return End timing of the Event chosen.
+     * @param infoParts Array of the individual components of the information of the Event.
+     * @return End timing of the Event.
      */
     private static String getTo(String[] infoParts) {
         return infoParts[LISTFILE_TO].trim();
     }
 
     /**
-     * Sets the completion status of a Task to the same as the format in the list of Tasks.
+     * Sets the completion status icon of a Task to follow the format in a list of Tasks.
      *
-     * @param task Task chosen.
-     * @return Completion status symbol. (X or _)
+     * @param task Task to get the completion status from.
+     * @return Completion status icon (X or _).
      */
     private static char getTaskType(Task task) {
         return task.getTaskType();
@@ -317,17 +316,16 @@ public class Storage {
 
 
     /*
-     * Secondary Methods (for writeTextFile)
+     * SECONDARY METHODS (for writeTextFile)
      */
 
     /**
-     * Inputs a Task and creates a default String format for writing to the provided text file.
-     * The information in this String, which is the completion status and description,
-     * are common among all types of Tasks.
+     * Inputs a Task and creates a default String for writing to the text file. The information in this String,
+     * which is the completion status and description, are common among all types of Tasks.
      *
-     * @param task Task chosen.
-     * @param taskType Type of the Task chosen.
-     * @return String of the common information of the Task chosen.
+     * @param task Task to get the description and completion status from.
+     * @param taskType Type of the Task in char form.
+     * @return String containing the common information of the Task.
      */
     private static String makeDefaultString(Task task, char taskType) {
         return taskType + LISTFILE_DIVIDER + task.getStatusIcon() +
@@ -337,8 +335,8 @@ public class Storage {
     /**
      * Gets the deadline timing of a Deadline.
      *
-     * @param deadline Deadline chosen.
-     * @return Deadline timing of the Deadline chosen.
+     * @param deadline Deadline to get the deadline timing from.
+     * @return Deadline timing of the Deadline.
      */
     private static String getBy(Deadline deadline) {
         return deadline.getBy();
@@ -347,8 +345,8 @@ public class Storage {
     /**
      * Gets the start timing of an Event.
      *
-     * @param event Event chosen.
-     * @return Start timing of the Event chosen.
+     * @param event Event to get the start timing from.
+     * @return Start timing of the Event.
      */
     private static String getFrom(Event event) {
         return event.getFrom();
@@ -357,8 +355,8 @@ public class Storage {
     /**
      * Gets the end timing of an Event.
      *
-     * @param event Event chosen.
-     * @return End timing of the Event chosen.
+     * @param event Event to get the end timing from.
+     * @return End timing of the Event.
      */
     private static String getTo(Event event) {
         return event.getTo();
@@ -366,12 +364,11 @@ public class Storage {
 
 
     /*
-     * Error Printing Method
+     * ERROR PRINTING METHOD
      */
 
     /**
-     * Prints error messages when there are issues with
-     * reading or writing to the provided text file.
+     * Prints error messages when there are issues with reading from or writing to the text file.
      *
      * @param message Error message to print.
      */

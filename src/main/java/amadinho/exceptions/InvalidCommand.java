@@ -1,8 +1,7 @@
 package amadinho.exceptions;
 
 /**
- * Exception for the scenario when
- * the command input is of incorrect format.
+ * Exception for the scenario when the command input is of incorrect format.
  */
 public class InvalidCommand extends Exception {
 

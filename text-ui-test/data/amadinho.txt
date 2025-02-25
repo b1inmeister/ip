@@ -1,2 +1,2 @@
-T | _ | tod
-E | X | even2 | 03 Mar 2025 1854 | 06 Nov 2025 1423
+T | _ | go for training
+E | X | manchester derby | 05 Apr 2025 1400 | 05 Apr 2025 1600

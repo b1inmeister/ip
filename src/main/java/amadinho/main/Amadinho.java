@@ -9,15 +9,13 @@ import java.util.Scanner;
 import java.util.ArrayList;
 
 /**
- * Main class for execution of Amadinho.
- * Program starts and terminates here.
+ * Main class for execution of Amadinho. Program starts and terminates here.
  */
 public class Amadinho {
 
     /**
-     * Method for execution of Amadinho. When the program
-     * is started, this method is called, and the program
-     * terminates when the method has finished execution.
+     * Method for execution of Amadinho. When the program is started, this method is called, and the program
+     * terminates when this method has finished execution.
      *
      * @param args Command-line arguments passed to the program.
      */
