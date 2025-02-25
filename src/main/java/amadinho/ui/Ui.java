@@ -1,5 +1,7 @@
 package amadinho.ui;
 
+import static amadinho.ui.UiConstants.*;
+
 import amadinho.main.Constants;
 import amadinho.tasktypes.Task;
 
@@ -37,13 +39,11 @@ public class Ui {
      * @return Remaining words in the command input.
      */
     public static String readInfo(Scanner in, boolean isStart) {
-
         if (isStart) {
             return in.nextLine();
         } else {
             return in.nextLine().trim();
         }
-
     }
 
     /**
@@ -54,7 +54,7 @@ public class Ui {
      * @return Boolean value that indicates if the "bye" command is inputted.
      */
     public static boolean isCompleted(String userCommand) {
-        return userCommand.equals(Constants.COMMAND_BYE);
+        return userCommand.equals(COMMAND_BYE);
     }
 
 
@@ -67,7 +67,7 @@ public class Ui {
      */
     public static void welcomeMessage() {
         System.out.println(Constants.BORDER_LINE);
-        System.out.println(Constants.MESSAGE_WELCOME);
+        System.out.println(MESSAGE_WELCOME);
         System.out.println(Constants.BORDER_LINE);
     }
 
@@ -76,7 +76,7 @@ public class Ui {
      */
     public static void exitMessage() {
         System.out.println(Constants.BORDER_LINE);
-        System.out.println(Constants.MESSAGE_EXIT);
+        System.out.println(MESSAGE_EXIT);
         System.out.println(Constants.BORDER_LINE);
     }
 
@@ -93,9 +93,9 @@ public class Ui {
         System.out.println(Constants.BORDER_LINE);
 
         if (toMark) {
-            System.out.println(Constants.MESSAGE_MARK_COMPLETE);
+            System.out.println(MESSAGE_MARK_COMPLETE);
         } else {
-            System.out.println(Constants.MESSAGE_UNMARK_COMPLETE);
+            System.out.println(MESSAGE_UNMARK_COMPLETE);
         }
 
         System.out.println(taskCount + Constants.LIST_DOT + taskToMark);
@@ -109,12 +109,10 @@ public class Ui {
      * @param taskToDelete Data of the Task that was deleted from the list.
      */
     public static void deleteCommandMessage(ArrayList<Task> taskList, Task taskToDelete) {
-        int totalTasks = taskList.size();
-
         System.out.println(Constants.BORDER_LINE);
-        System.out.println(Constants.MESSAGE_DELETED_TASK);
+        System.out.println(MESSAGE_DELETED_TASK);
         System.out.println(Constants.LIST_SPACE + taskToDelete);
-        System.out.println(printTotalTasks(totalTasks));
+        System.out.println(printTotalTasks(taskList));
         System.out.println(Constants.BORDER_LINE);
     }
 
@@ -125,22 +123,22 @@ public class Ui {
      * @param newTask Data of the Task that was added to the list.
      */
     public static void addCommandMessage(ArrayList<Task> taskList, Task newTask) {
-        int totalTasks = taskList.size();
-
         System.out.println(Constants.BORDER_LINE);
-        System.out.println(Constants.MESSAGE_ADDED_TASK);
+        System.out.println(MESSAGE_ADDED_TASK);
         System.out.println(Constants.LIST_SPACE + newTask);
-        System.out.println(printTotalTasks(totalTasks));
+        System.out.println(printTotalTasks(taskList));
         System.out.println(Constants.BORDER_LINE);
     }
 
     /**
      * Returns a String of the total number of Tasks in the list.
      *
-     * @param totalTasks Number of Tasks in the list
+     * @param taskList List of Tasks.
      * @return Message indicating the number of Tasks in the list.
      */
-    public static String printTotalTasks(int totalTasks) {
-        return Constants.MESSAGE_TOTALTASKS + totalTasks;
+    public static String printTotalTasks(ArrayList<Task> taskList) {
+        int totalTasks = taskList.size();
+
+        return MESSAGE_TOTALTASKS + totalTasks;
     }
 }

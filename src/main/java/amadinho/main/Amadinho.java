@@ -1,9 +1,9 @@
 package amadinho.main;
 
+import amadinho.ui.Ui;
 import amadinho.parser.Parser;
 import amadinho.storage.Storage;
-import amadinho.tasktypes.*;
-import amadinho.ui.Ui;
+import amadinho.tasktypes.Task;
 
 import java.util.Scanner;
 import java.util.ArrayList;

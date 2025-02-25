@@ -9,7 +9,7 @@ public class Event extends Task {
     protected String to;
 
     /**
-     * Constructor for a Event to be instantiated.
+     * Constructor for an Event to be instantiated.
      *
      * @param description Description of the Event to be instantiated.
      * @param from Start date / time of this Event.
@@ -22,7 +22,7 @@ public class Event extends Task {
     }
 
     /**
-     * Getter function for the start date and time of a Event.
+     * Getter function for the start date and time of an Event.
      *
      * @return Start date / time of the Event chosen.
      */
@@ -31,7 +31,7 @@ public class Event extends Task {
     }
 
     /**
-     * Getter function for the end date and time of a Event.
+     * Getter function for the end date and time of an Event.
      *
      * @return End date / time of the Event chosen.
      */
@@ -40,7 +40,7 @@ public class Event extends Task {
     }
 
     /**
-     * Converts a Event to a String type for printing purposes.
+     * Converts an Event to a String type for printing purposes.
      * Builds upon the similarly named method in the Task superclass.
      *
      * @return String version of the Event chosen.
