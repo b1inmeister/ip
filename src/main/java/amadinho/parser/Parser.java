@@ -6,7 +6,8 @@ import amadinho.main.Constants;
 import amadinho.ui.Ui;
 import amadinho.tasklist.Tasklist;
 import amadinho.storage.Storage;
-import amadinho.exceptions.EmptyList;
+
+import amadinho.exceptions.EmptyString;
 import amadinho.exceptions.InvalidCommand;
 import amadinho.tasktypes.Deadline;
 import amadinho.tasktypes.Event;
@@ -18,7 +19,9 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 
-public class Parser{
+public class Parser {
+
+
 
     /*
      * Main Command Execution Method
@@ -29,6 +32,9 @@ public class Parser{
             switch (userCommand) {
             case COMMAND_LIST:
                 commandList(taskList);
+                break;
+            case COMMAND_FIND:
+                commandFind(taskList, information);
                 break;
             case COMMAND_MARK:
                 commandMark(taskList, information);
@@ -62,16 +68,26 @@ public class Parser{
      */
 
     private static void commandList(ArrayList<Task> taskList) {
+        Tasklist.executeList(taskList, false);
+
+    }
+
+    private static void commandFind(ArrayList<Task> taskList, String information) {
+        ArrayList<Task> foundTasks = new ArrayList<>();
+
         try {
-            if (taskList.isEmpty()) {
-                errorEmptyList(MESSAGE_LIST_EMPTY);
-            } else {
-                System.out.println(Constants.BORDER_LINE);
-                System.out.println(MESSAGE_LIST_INTRO);
-                Tasklist.printList(taskList);
-                System.out.println(Constants.BORDER_LINE);
+            if (information.isEmpty()) {
+                errorEmptyString();
             }
-        } catch (EmptyList e) {
+
+            for (Task task : taskList) {
+                if (isContains(information, task)) {
+                    Tasklist.insertIntoTaskList(foundTasks, task, false);
+                }
+            }
+
+            Tasklist.executeList(foundTasks, true);
+        } catch (EmptyString e) {
             errorPrinting(e);
         }
     }
@@ -177,6 +193,10 @@ public class Parser{
      * Secondary Command Methods
      */
 
+    private static boolean isContains(String information, Task task) {
+        return task.getDescription().contains(information);
+    }
+
     private static boolean isEmpty(String information) {
         return information.isEmpty();
     }
@@ -262,21 +282,15 @@ public class Parser{
 
 
     /*
-     * Error Printing Methods
+     * Exception Handling Methods
      */
 
-    private static void errorPrinting(Exception e) {
-        System.out.println(Constants.BORDER_LINE);
-        System.out.println(e.getMessage());
-        System.out.println(Constants.BORDER_LINE);
+    private static void errorEmptyString() throws EmptyString {
+        throw new EmptyString(MESSAGE_ERROR_INVALID_COMMAND_FIND);
     }
 
     private static void errorInvalidCommand(String message) throws InvalidCommand {
         throw new InvalidCommand(message);
-    }
-
-    public static void errorEmptyList(String message) throws EmptyList {
-        throw new EmptyList(message);
     }
 
     public static void printIndexOutOfBoundsExceptionMessage() {
@@ -301,6 +315,12 @@ public class Parser{
     private static void printDateTimeParseExceptionMessage(String message) {
         System.out.println(Constants.BORDER_LINE);
         System.out.println(message);
+        System.out.println(Constants.BORDER_LINE);
+    }
+
+    public static void errorPrinting(Exception e) {
+        System.out.println(Constants.BORDER_LINE);
+        System.out.println(e.getMessage());
         System.out.println(Constants.BORDER_LINE);
     }
 }
