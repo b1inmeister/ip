@@ -1,6 +1,11 @@
 package amadinho.main;
 
+/**
+ * Contains constants that are commonly
+ * used within all classes of Amadinho.
+ */
 public class Constants {
+
     public static final int LIST_COUNTER_START = 1;
     public static final int ARRAY_INCREMENT = 1;
     public static final int START_OF_STRING = 0;

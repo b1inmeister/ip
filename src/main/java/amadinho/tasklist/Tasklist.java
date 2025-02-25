@@ -8,12 +8,16 @@ import amadinho.tasktypes.Task;
 
 import java.util.ArrayList;
 
+/**
+ * Contains methods that manipulate the list of Tasks.
+ */
 public class Tasklist {
 
-    /*
-     * taskList Manipulation Methods
+    /**
+     * Prints all the Tasks in the list of Tasks.
+     *
+     * @param taskList List of Tasks.
      */
-
     public static void printList(ArrayList<Task> taskList) {
         int taskCounter = Constants.LIST_COUNTER_START;
 
@@ -23,6 +27,18 @@ public class Tasklist {
         }
     }
 
+    /**
+     * Marks or unmarks a Task that is within the list of Tasks.
+     * If the information parameter does not contain a number, NumberFormatException is thrown.
+     * If number provided in the information parameter exceeds the number of Tasks
+     * in the list, IndexOutOfBoundsException is thrown.
+     *
+     * @param taskList List of Tasks.
+     * @param information Index of Task to be marked or unmarked.
+     * @param toMark Boolean value to determine whether to mark or unmark the Task chosen.
+     *               toMark = true --> Task is to be marked.
+     *               toMark = false --> Task is to be unmarked.
+     */
     public static void executeMark(ArrayList<Task> taskList, String information, boolean toMark) {
         int taskCount;
 
@@ -50,10 +66,20 @@ public class Tasklist {
 
     }
 
+    /**
+     * Inserts a Task to the end of the list of Tasks.
+     *
+     * @param taskList List of Tasks.
+     * @param newTask Task to be added to the list of Tasks.
+     * @param isStart Boolean value to determine the purpose of using this method.
+     *                isStart = true --> Method is used to transfer data from a provided text file to
+     *                                   the program.
+     *                isStart = false --> Method is used to insert a Task that is provided from user input.
+     */
     public static void insertIntoTaskList(ArrayList<Task> taskList, Task newTask, boolean isStart) {
         taskList.add(newTask);
 
-        if (isStart) {
+        if (!isStart) {
             Ui.addCommandMessage(taskList, newTask);
         }
     }
