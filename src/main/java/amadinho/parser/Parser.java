@@ -8,7 +8,6 @@ import amadinho.tasklist.Tasklist;
 import amadinho.storage.Storage;
 
 import amadinho.exceptions.EmptyString;
-import amadinho.exceptions.EmptyList;
 import amadinho.exceptions.InvalidCommand;
 import amadinho.tasktypes.Deadline;
 import amadinho.tasktypes.Event;
@@ -22,9 +21,7 @@ import java.util.ArrayList;
 
 public class Parser {
 
-    public static final String COMMAND_FIND = "find";
-    public static final String MESSAGE_ERROR_INVALID_COMMAND_FIND =
-            MESSAGE_ERROR_INVALID_COMMAND + "\n" + "find <description>";
+
 
     /*
      * Main Command Execution Method
@@ -294,10 +291,6 @@ public class Parser {
 
     private static void errorInvalidCommand(String message) throws InvalidCommand {
         throw new InvalidCommand(message);
-    }
-
-    public static void errorEmptyList(String message) throws EmptyList {
-        throw new EmptyList(message);
     }
 
     public static void printIndexOutOfBoundsExceptionMessage() {

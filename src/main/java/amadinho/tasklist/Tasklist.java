@@ -1,5 +1,7 @@
 package amadinho.tasklist;
 
+import static amadinho.tasklist.TasklistConstants.*;
+
 import amadinho.exceptions.EmptyList;
 import amadinho.main.Constants;
 import amadinho.parser.ParserConstants;
@@ -11,9 +13,6 @@ import amadinho.tasktypes.Task;
 import java.util.ArrayList;
 
 public class Tasklist {
-
-    public static final String MESSAGE_FIND_INTRO = "Tasks found:";
-    public static final String MESSAGE_FIND_FAILED = "No tasks found. Skill issue.";
 
     /*
      * Primary taskList Manipulation Methods
@@ -88,7 +87,7 @@ public class Tasklist {
         if (isFind) {
             errorEmptyList(MESSAGE_FIND_FAILED);
         } else {
-            errorEmptyList(Constants.MESSAGE_LIST_EMPTY);
+            errorEmptyList(MESSAGE_LIST_EMPTY);
         }
     }
 
@@ -96,7 +95,7 @@ public class Tasklist {
         if (isFind) {
             System.out.println(MESSAGE_FIND_INTRO);
         } else {
-            System.out.println(Constants.MESSAGE_LIST_INTRO);
+            System.out.println(MESSAGE_LIST_INTRO);
         }
     }
 

@@ -7,6 +7,7 @@ public class ParserConstants {
     public static final String DATETIME_OUTPUT_FORMAT = "dd MMM yyyy HHmm";
 
     public static final String COMMAND_LIST = "list";
+    public static final String COMMAND_FIND = "find";
     public static final String COMMAND_MARK = "mark";
     public static final String COMMAND_UNMARK = "unmark";
     public static final String COMMAND_DELETE = "delete";
@@ -22,11 +23,10 @@ public class ParserConstants {
     public static final int LENGTH_FROM = IDENTIFIER_FROM.length();
     public static final int LENGTH_TO = IDENTIFIER_TO.length();
 
-    public static final String MESSAGE_LIST_INTRO = "Tasks in the list:";
-    public static final String MESSAGE_LIST_EMPTY = "The list is empty. Lazy bum.";
-
     public static final String MESSAGE_ERROR_OUTOFBOUNDS = "Number provided is not in the list. Lousy.";
     public static final String MESSAGE_ERROR_INVALID_COMMAND = "Invalid command. Skill issue.";
+    public static final String MESSAGE_ERROR_INVALID_COMMAND_FIND = MESSAGE_ERROR_INVALID_COMMAND
+            + "\n" + "find <description>";
     public static final String MESSAGE_ERROR_INVALID_COMMAND_EVENT = MESSAGE_ERROR_INVALID_COMMAND
             + "\n" + "event <description> /from <yyyy-MM-dd HHmm> /to <yyyy-MM-dd HHmm>";
     public static final String MESSAGE_ERROR_INVALID_COMMAND_DEADLINE = MESSAGE_ERROR_INVALID_COMMAND
